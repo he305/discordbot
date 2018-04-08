@@ -9,7 +9,7 @@ if not discord.opus.is_loaded():
     # opus library is located in and with the proper filename.
     # note that on windows this DLL is automatically provided for you
     #bla
-    discord.opus.load_opus('opus')
+    discord.opus.load_opus('opus/lib/libopus.so')
 
 class VoiceEntry:
     def __init__(self, message, player):
