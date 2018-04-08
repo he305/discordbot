@@ -1,9 +1,11 @@
 from discord.ext.commands import Bot
 from getlist import get_data
 from forecast import weather
+import os
+
 
 BOT_PREFIX = ('?', '!')
-TOKEN = process.env.TOKEN
+TOKEN = os.environ.get('TOKEN')
 
 client = Bot(command_prefix=BOT_PREFIX)
 
