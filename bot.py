@@ -3,7 +3,7 @@ from getlist import get_data
 from forecast import weather
 
 BOT_PREFIX = ('?', '!')
-TOKEN = 'NDMyNTE5MjMzMDQ2NDQ2MTAx.DauehA.UG5dJPPTyrrTGtVxvRZfsnZDFcQ'
+TOKEN = process.env.TOKEN
 
 client = Bot(command_prefix=BOT_PREFIX)
 
