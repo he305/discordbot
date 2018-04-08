@@ -24,7 +24,7 @@ def weather():
     res = requests.get(API_URL+'weather', params=params)
     data = res.json()
     location = "Weather for {}\n".format(DEFAULT_CITY)
-    str_data = "{0}/{1} - {2}\n".format(data["main"]["temp_min"], data["main"]["temp_max"], data["weather"][0]["description"])
+    str_data = "{0}°/{1}° - {2}\n".format(data["main"]["temp_min"], data["main"]["temp_max"], data["weather"][0]["description"])
     return location + str_data
 
 
