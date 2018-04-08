@@ -4,6 +4,7 @@ from forecast import weather
 import os
 from music import Music
 
+
 BOT_PREFIX = ('?', '!')
 TOKEN = os.environ.get('TOKEN') or 'NDMyNTE5MjMzMDQ2NDQ2MTAx.DauehA.UG5dJPPTyrrTGtVxvRZfsnZDFcQ'
 
