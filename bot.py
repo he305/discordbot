@@ -27,7 +27,7 @@ async def get_anime(ctx, nickname='he3050'):
 @client.command(name="weather")
 async def get_weather():
     data = weather()
-    await client.say("{0}/{1} - {2}".format(data["main"]["temp_min"], data["main"]["temp_max"], data["weather"][0]["description"]))
+    await client.say(data)
 
 @client.event
 async def on_ready():
