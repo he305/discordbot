@@ -1,9 +1,6 @@
 from discord.ext import commands
 import discord
 import asyncio
-import youtube_dl
-import PyNaCl
-
 
 #if not discord.opus.is_loaded():
     # the 'opus' library here is opus.dll on windows
