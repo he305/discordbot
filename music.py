@@ -1,6 +1,9 @@
 from discord.ext import commands
 import discord
 import asyncio
+import urllib
+import re
+
 
 if not discord.opus.is_loaded():
     # the 'opus' library here is opus.dll on windows
@@ -9,6 +12,7 @@ if not discord.opus.is_loaded():
     # opus library is located in and with the proper filename.
     # note that on windows this DLL is automatically provided for you
     #bla
+    #discord.opus.load_opus('opus')
     discord.opus.load_opus('opus/lib/libopus.so')
 
 
@@ -107,8 +111,46 @@ class Music:
 
         return True
 
+    def crawl(self, url):
+        sTUBE = ''
+        cPL = ''
+        final_url = []
+
+        if 'list=' in url:
+            eq = url.rfind('=') + 1
+            cPL = url[eq:]
+
+        else:
+            print('Incorrect Playlist.')
+            exit(1)
+
+        try:
+            yTUBE = urllib.request.urlopen(url).read()
+            sTUBE = str(yTUBE)
+        except urllib.error.URLError as e:
+            print(e.reason)
+
+        tmp_mat = re.compile(r'watch\?v=\S+?list=' + cPL)
+        mat = re.findall(tmp_mat, sTUBE)
+
+        if mat:
+
+            for PL in mat:
+                yPL = str(PL)
+                if '&' in yPL:
+                    yPL_amp = yPL.index('&')
+                final_url.append('http://www.youtube.com/' + yPL[:yPL_amp])
+
+            all_url = list(set(final_url))
+
+            return all_url
+
+        else:
+            return []
+
+
     @commands.command(pass_context=True, no_pm=True)
-    async def play(self, ctx, *, song: str):
+    async def play(self, ctx, *, url: str):
         """Plays a song.
         If there is a song currently in the queue, then it is
         queued until the next song is done playing.
@@ -116,11 +158,11 @@ class Music:
         The list of supported sites can be found here:
         https://rg3.github.io/youtube-dl/supportedsites.html
         """
-
+        await self.bot.say('Start song adding')
         state = self.get_voice_state(ctx.message.server)
         opts = {
             'default_search': 'auto',
-            'quiet': True,
+            'quiet': True
         }
 
         if state.voice is None:
@@ -128,17 +170,25 @@ class Music:
             if not success:
                 return
 
-        try:
-            player = await state.voice.create_ytdl_player(song, ytdl_options=opts, after=state.toggle_next)
-            print(player)
-        except Exception as e:
-            fmt = 'An error occurred while processing this request: ```py\n{}: {}\n```'
-            await self.bot.send_message(ctx.message.channel, fmt.format(type(e).__name__, e))
-        else:
-            player.volume = 0.6
-            entry = VoiceEntry(ctx.message, player)
-            await self.bot.say('Enqueued ' + str(entry))
-            await state.songs.put(entry)
+        data = []
+        if 'list=' in url:
+            data = self.crawl(url)
+
+        if len(data) == 0:
+            data.append(url)
+
+        for song in data:
+            try:
+                player = await state.voice.create_ytdl_player(song, ytdl_options=opts, after=state.toggle_next)
+            except Exception as e:
+                fmt = 'An error occurred while processing this request: ```py\n{}: {}\n```'
+                await self.bot.send_message(ctx.message.channel, fmt.format(type(e).__name__, e))
+            else:
+                player.volume = 0.6
+                entry = VoiceEntry(ctx.message, player)
+                await self.bot.say('Enqueued ' + str(entry))
+                await state.songs.put(entry)
+        await self.bot.say('Song adding complete')
 
     @commands.command(pass_context=True, no_pm=True)
     async def volume(self, ctx, value: int):
@@ -168,3 +218,29 @@ class Music:
             await state.voice.disconnect()
         except:
             pass
+
+    @commands.command(pass_context=True, no_pm=True)
+    async def skip(self, ctx):
+        """Vote to skip a song. The song requester can automatically skip.
+        3 skip votes are needed for the song to be skipped.
+        """
+
+        state = self.get_voice_state(ctx.message.server)
+        if not state.is_playing():
+            await self.bot.say('Not playing any music right now...')
+            return
+
+        voter = ctx.message.author
+        if voter == state.current.requester:
+            await self.bot.say('Requester requested skipping song...')
+            state.skip()
+        elif voter.id not in state.skip_votes:
+            state.skip_votes.add(voter.id)
+            total_votes = len(state.skip_votes)
+            if total_votes >= 1:
+                await self.bot.say('Skip vote passed, skipping song...')
+                state.skip()
+            else:
+                await self.bot.say('Skip vote added, currently at [{}/3]'.format(total_votes))
+        else:
+            await self.bot.say('You have already voted to skip this song.')
