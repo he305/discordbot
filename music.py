@@ -11,6 +11,7 @@ if not discord.opus.is_loaded():
     #bla
     discord.opus.load_opus('opus/lib/libopus.so')
 
+
 class VoiceEntry:
     def __init__(self, message, player):
         self.requester = message.author
