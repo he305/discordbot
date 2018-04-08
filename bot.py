@@ -10,7 +10,7 @@ TOKEN = os.environ.get('TOKEN')
 client = Bot(command_prefix=BOT_PREFIX)
 
 @client.command(name="anime",
-                description="Get anime list",
+                description="Get anime list for specific user",
                 pass_context=True)
 async def get_anime(ctx, nickname='he3050'):
     await client.say("Starting collecting data for {}".format(ctx.message.author.mention))
