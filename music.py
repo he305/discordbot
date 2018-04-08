@@ -7,7 +7,7 @@ import re
 
 if not discord.opus.is_loaded():
     discord.opus.load_opus('opus/lib/libopus.so')
-    discord.opus.load_opus('opus')
+    #discord.opus.load_opus('opus')
 
 
 class VoiceEntry:
