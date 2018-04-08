@@ -106,22 +106,22 @@ class Music:
         return True
 
     def crawl(self, url):
-        sTUBE = ''
-        cPL = ''
+        str_page = ''
+        playlist_url = ''
         final_url = []
         if 'list=' in url:
             eq = url.rfind('=') + 1
-            cPL = url[eq:]
+            playlist_url = url[eq:]
         else:
             print('Incorrect Playlist.')
             exit(1)
         try:
             yTUBE = urllib.request.urlopen(url).read()
-            sTUBE = str(yTUBE)
+            str_page = str(yTUBE)
         except urllib.error.URLError as e:
             print(e.reason)
-        tmp_mat = re.compile(r'watch\?v=\S+?list=' + cPL)
-        mat = re.findall(tmp_mat, sTUBE)
+        tmp_mat = re.compile(r'watch\?v=\S+?list=' + playlist_url)
+        mat = re.findall(tmp_mat, str_page)
         if mat:
             for PL in mat:
                 yPL = str(PL)
@@ -157,14 +157,17 @@ class Music:
 
         data = []
         if 'list=' in url:
+            url = 'https://www.youtube.com/playlist?' + url[url.rfind('list'):]
             data = self.crawl(url)
 
         if len(data) == 0:
             data.append(url)
 
         for song in data:
+            # If bot already stopped
             if self.get_voice_state(ctx.message.server).voice is None:
                 continue
+
             try:
                 player = await state.voice.create_ytdl_player(song, ytdl_options=opts, after=state.toggle_next)
             except Exception as e:
