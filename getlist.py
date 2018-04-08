@@ -16,7 +16,7 @@ def get_url(url):
 
 
 def get_data(nickaname):
-    if nickaname == "":
+    if nickaname is None:
         nickaname = 'he3050'
     data = get_url("https://myanimelist.net/malappinfo.php?u={}&status=all".format(nickaname))
     root = etree.fromstring(data)
@@ -29,7 +29,7 @@ def get_data(nickaname):
 
 
 def main():
-    data = get_data()
+    data = get_data(None)
 
     for d in data:
         print(d.form_full_info())    

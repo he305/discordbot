@@ -15,8 +15,12 @@ client = Bot(command_prefix=BOT_PREFIX)
 async def get_anime(ctx, nickname='he3050'):
     await client.say("Starting collecting data for {}".format(ctx.message.author.mention))
     animes = get_data(nickname)
+
+    data = ""
     for anime in animes:
-        await client.say(anime.form_full_info())
+        data += anime.form_full_info() + '\n'
+
+    await client.say(data)
     await client.say("Complete {}".format(ctx.message.author.mention))
 
 
