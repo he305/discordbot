@@ -6,14 +6,8 @@ import re
 
 
 if not discord.opus.is_loaded():
-    # the 'opus' library here is opus.dll on windows
-    # or libopus.so on linux in the current directory
-    # you should replace this with the location the
-    # opus library is located in and with the proper filename.
-    # note that on windows this DLL is automatically provided for you
-    #bla
-    #discord.opus.load_opus('opus')
     discord.opus.load_opus('opus/lib/libopus.so')
+    discord.opus.load_opus('opus')
 
 
 class VoiceEntry:
@@ -178,17 +172,20 @@ class Music:
             data.append(url)
 
         for song in data:
+            if self.get_voice_state(ctx.message.server).voice is None:
+                continue
             try:
                 player = await state.voice.create_ytdl_player(song, ytdl_options=opts, after=state.toggle_next)
             except Exception as e:
                 fmt = 'An error occurred while processing this request: ```py\n{}: {}\n```'
                 await self.bot.send_message(ctx.message.channel, fmt.format(type(e).__name__, e))
             else:
-                player.volume = 0.6
+                player.volume = 0.2
                 entry = VoiceEntry(ctx.message, player)
                 await self.bot.say('Enqueued ' + str(entry))
                 await state.songs.put(entry)
-        await self.bot.say('Song adding complete')
+
+                await state.play_next_song.wait()
 
     @commands.command(pass_context=True, no_pm=True)
     async def volume(self, ctx, value: int):
