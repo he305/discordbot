@@ -2,12 +2,14 @@ from discord.ext.commands import Bot
 from getlist import get_data
 from forecast import weather
 import os
+from music import Music
 
 
 BOT_PREFIX = ('?', '!')
-TOKEN = os.environ.get('TOKEN')
+TOKEN = os.environ.get('TOKEN') or 'NDMyNTE5MjMzMDQ2NDQ2MTAx.DauehA.UG5dJPPTyrrTGtVxvRZfsnZDFcQ'
 
 client = Bot(command_prefix=BOT_PREFIX)
+client.add_cog(Music(client))
 
 @client.command(name="anime",
                 description="Get anime list for specific user",
