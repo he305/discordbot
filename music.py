@@ -128,7 +128,9 @@ class Music:
                 if '&' in yPL:
                     yPL_amp = yPL.index('&')
                 final_url.append('http://www.youtube.com/' + yPL[:yPL_amp])
-            all_url = list(set(final_url))
+            all_url = sorted(set(final_url), key=lambda x: final_url.index(x))
+            for ur in all_url:
+                print(ur)
             return all_url
         else:
             return []
