@@ -3,11 +3,10 @@ from getlist import get_data
 from forecast import weather
 import os
 from music import Music
-from discord import Client
 
 
 BOT_PREFIX = ('?', '!')
-TOKEN = os.environ.get('TOKEN') or 'NDMyNTE5MjMzMDQ2NDQ2MTAx.DauehA.UG5dJPPTyrrTGtVxvRZfsnZDFcQ'
+TOKEN = os.environ.get('TOKEN')
 
 client = Bot(command_prefix=BOT_PREFIX)
 client.add_cog(Music(client))
@@ -46,12 +45,13 @@ async def sit(ctx):
 @client.command(pass_context=True)
 async def clear(ctx):
     if not ctx.message.author.server_permissions.administrator:
-        client.say("Admin permission required for this command")
+        await client.say("Admin permission required for this command")
         return
     msg = []
     print(ctx.message.channel)
     async for x in client.logs_from(ctx.message.channel):
         msg.append(x)
     await client.delete_messages(msg)
+
 
 client.run(TOKEN)
