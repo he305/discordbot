@@ -3,6 +3,7 @@ from getlist import get_data
 from forecast import weather
 import os
 from music import Music
+from discord import Client
 
 
 BOT_PREFIX = ('?', '!')
@@ -34,5 +35,23 @@ async def get_weather():
 @client.event
 async def on_ready():
     pass
+
+
+@client.command(name="сидим",
+                pass_context=True)
+async def sit(ctx):
+    await client.send_file(ctx.message.channel, 'pics/sidim.jpg')
+
+
+@client.command(pass_context=True)
+async def clear(ctx):
+    if not ctx.message.author.server_permissions.administrator:
+        client.say("Admin permission required for this command")
+        return
+    msg = []
+    print(ctx.message.channel)
+    async for x in client.logs_from(ctx.message.channel):
+        msg.append(x)
+    await client.delete_messages(msg)
 
 client.run(TOKEN)

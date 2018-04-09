@@ -136,9 +136,9 @@ class Music:
             return []
 
     @commands.command(pass_context=True, no_pm=True)
-    async def play(self, ctx, *, url: str):
+    async def playlist(self, ctx, *, url: str):
 
-        await self.bot.say('Start song adding')
+        await self.bot.say('Start adding playlist')
         state = self.get_voice_state(ctx.message.server)
         opts = {
             'default_search': 'auto',
@@ -175,6 +175,35 @@ class Music:
                 await state.songs.put(entry)
 
                 await state.play_next_song.wait()
+
+    @commands.command(pass_context=True, no_pm=True)
+    async def play(self, ctx, *, song: str):
+
+        await self.bot.say('Start song adding')
+        state = self.get_voice_state(ctx.message.server)
+        opts = {
+            'default_search': 'auto',
+            'quiet': True
+        }
+
+        if state.voice is None:
+            success = await ctx.invoke(self.summon)
+            if not success:
+                return
+
+
+        try:
+            player = await state.voice.create_ytdl_player(song, ytdl_options=opts, after=state.toggle_next)
+        except Exception as e:
+            fmt = 'An error occurred while processing this request: ```py\n{}: {}\n```'
+            await self.bot.send_message(ctx.message.channel, fmt.format(type(e).__name__, e))
+        else:
+            player.volume = 0.2
+            entry = VoiceEntry(ctx.message, player)
+            await self.bot.say('Enqueued ' + str(entry))
+            await state.songs.put(entry)
+
+            await state.play_next_song.wait()
 
     @commands.command(pass_context=True, no_pm=True)
     async def volume(self, ctx, value: int):
