@@ -135,10 +135,9 @@ class Music:
         else:
             return []
 
-
     @commands.command(pass_context=True, no_pm=True)
     async def play(self, ctx, *, url: str):
-        
+
         await self.bot.say('Start song adding')
         state = self.get_voice_state(ctx.message.server)
         opts = {
