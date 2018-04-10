@@ -258,3 +258,14 @@ class Music:
                 await self.bot.say('Skip vote added, currently at [{}/3]'.format(total_votes))
         else:
             await self.bot.say('You have already voted to skip this song.')
+
+    @commands.command(pass_context=True, no_pm=True)
+    async def song(self, ctx):
+        """Get current song
+        """
+        state = self.get_voice_state(ctx.message.server)
+        if not state.is_playing():
+            await self.bot.say('Not playing any music right now...')
+            return
+
+        await self.bot.say("Current song: {}".format(str(state.current)))
