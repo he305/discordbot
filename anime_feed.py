@@ -43,7 +43,7 @@ class Feeder:
                     title = self.fix_rss_title(entry.title)
                     if title in skipped and title not in self.rss_feed:
                         link = requests.get("http://mgnet.me/api/create?m=" + entry.link).json()
-                        data = "ctx.message.author.mention\nNew series: {}\n[Link]({})".format(entry.title, link['shorturl'])
+                        data = "{}\nNew series: {}\n[Link]({})".format(ctx.message.author.mention, entry.title, link['shorturl'])
                         await self.client.send_message(ctx.message.channel, data)
                         self.rss_feed.append(title)
                 print("Rss has been read")
