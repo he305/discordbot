@@ -21,37 +21,39 @@ class Feeder:
         await self.client.say("Starting reading rss for {}".format(nickname))
         self.running = True
         self.client.loop.create_task(self.feed_loop(ctx, nickname))
-        self.client.loop.create_task(self.clear_feed())
+        #self.client.loop.create_task(self.clear_feed())
 
     @commands.command(pass_context=True)
     async def stop_feed(self, ctx):
         if self.running:
             self.running = False
             self.rss_feed.clear()
-            self.client.send_message(ctx.message.channel, "Feeding rss stopped")
+            await self.client.send_message(ctx.message.channel, "Feeding rss stopped")
 
     async def feed_loop(self, ctx, nickname):
         await self.client.wait_until_ready()
         while self.running:
-            rss = feedparser.parse("http://horriblesubs.info/rss.php?res=1080")
             skipped = [self.remove_characters(c.name)
                        for c in get_data(nickname) if c.is_skipped()]
 
-            for entry in rss.entries:
-                title = self.fix_rss_title(entry.title)
-                if title in skipped and title not in self.rss_feed:
-                    link = requests.get("http://mgnet.me/api/create?m=" + entry.link).json()
-                    data = "New series: {}\n[Link]({})".format(entry.title, link['shorturl'])
-                    await self.client.send_message(ctx.message.channel, data)
-                    self.rss_feed.append(title)
-            print("Rss has been read")
+            if len(skipped) != 0:
+                rss = feedparser.parse("http://horriblesubs.info/rss.php?res=1080")
+
+                for entry in rss.entries:
+                    title = self.fix_rss_title(entry.title)
+                    if title in skipped and title not in self.rss_feed:
+                        link = requests.get("http://mgnet.me/api/create?m=" + entry.link).json()
+                        data = "New series: {}\n[Link]({})".format(entry.title, link['shorturl'])
+                        await self.client.send_message(ctx.message.channel, data)
+                        self.rss_feed.append(title)
+                print("Rss has been read")
             await asyncio.sleep(600)
 
-    async def clear_feed(self):
-        await self.client.wait_until_ready()
-        while self.running:
-            await asyncio.sleep(86400)
-            self.rss_feed.clear()
+    # async def clear_feed(self):
+    #     await self.client.wait_until_ready()
+    #     while self.running:
+    #         await asyncio.sleep(86400)
+    #         self.rss_feed.clear()
 
     def remove_characters(self, st):
         st = st.translate({ord(c): "" for c in "!@#$%^&*()[]{};:,./<>?\|`~-=_+"}).lower()
