@@ -36,17 +36,15 @@ class Feeder:
             rss = feedparser.parse("http://horriblesubs.info/rss.php?res=1080")
             skipped = [self.remove_characters(c.name)
                        for c in get_data(nickname) if c.is_skipped()]
-            print(skipped)
 
             for entry in rss.entries:
                 title = self.fix_rss_title(entry.title)
-                if 'boruto' in title:
-                    print(title)
                 if title in skipped and title not in self.rss_feed:
                     link = requests.get("http://mgnet.me/api/create?m=" + entry.link).json()
                     data = "New series: {}\n[Link]({})".format(entry.title, link['shorturl'])
                     await self.client.send_message(ctx.message.channel, data)
                     self.rss_feed.append(title)
+            print("Rss has been read")
             await asyncio.sleep(600)
 
     async def clear_feed(self):
