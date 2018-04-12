@@ -1,8 +1,9 @@
 from discord.ext.commands import Bot
-from getlist import get_data
+from animelist import get_data
 from forecast import weather
 import os
 from music import Music
+from anime_feed import Feeder
 
 
 BOT_PREFIX = ('?', '!')
@@ -10,6 +11,7 @@ TOKEN = os.environ.get('TOKEN')
 
 client = Bot(command_prefix=BOT_PREFIX)
 client.add_cog(Music(client))
+client.add_cog(Feeder(client))
 
 @client.command(name="anime",
                 description="Get anime list for specific user",
@@ -30,6 +32,7 @@ async def get_anime(ctx, nickname='he3050'):
 async def get_weather():
     data = weather()
     await client.say(data)
+
 
 @client.event
 async def on_ready():

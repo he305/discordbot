@@ -43,5 +43,8 @@ class Info:
             info += 'Новая серия в {0}.\n'.format(days[self.weekday])
         return info
 
+    def is_skipped(self):
+        return self.series_count - self.watched
+
     def __str__(self):
         return self.name
