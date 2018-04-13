@@ -1,3 +1,4 @@
 [
-  "test_stuff.py::test_list"
+  "tests/test_stuff.py::test_list",
+  "tests/test_stuff.py::test_for_list"
 ]

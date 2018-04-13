@@ -33,7 +33,7 @@ class Feeder:
     async def feed_loop(self, ctx, nickname):
         await self.client.wait_until_ready()
         while self.running:
-            skipped = [self.remove_characters(c.name)
+            skipped = [self.remove_characters(c.get_all_names())
                        for c in get_data(nickname) if c.is_skipped()]
 
             if len(skipped) != 0:
@@ -41,7 +41,7 @@ class Feeder:
 
                 for entry in rss.entries:
                     title = self.fix_rss_title(entry.title)
-                    if title in skipped and title not in self.rss_feed:
+                    if len([s for s in skipped if title in s]) != 0 and title not in self.rss_feed:
                         link = requests.get("http://mgnet.me/api/create?m=" + entry.link).json()
                         data = "{}\nNew series: {}\n[Link]({})".format(ctx.message.author.mention, entry.title, link['shorturl'])
                         await self.client.send_message(ctx.message.channel, data)
@@ -57,6 +57,9 @@ class Feeder:
 
     def remove_characters(self, st):
         st = st.translate({ord(c): "" for c in "!@#$%^&*()[]{};:,./<>?\|`~-=_+"}).lower()
+
+        #delete_season_pattern
+        st = re.sub('s\d+', '', st)
         return " ".join(st.split())
 
 

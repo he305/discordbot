@@ -7,7 +7,7 @@ from anime_feed import Feeder
 
 
 BOT_PREFIX = ('?', '!')
-TOKEN = os.environ.get('TOKEN')
+TOKEN = os.environ.get('TOKEN') or 'NDMyNTE5MjMzMDQ2NDQ2MTAx.DauehA.UG5dJPPTyrrTGtVxvRZfsnZDFcQ'
 
 client = Bot(command_prefix=BOT_PREFIX)
 client.add_cog(Music(client))
