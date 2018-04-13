@@ -21,7 +21,7 @@ class Feeder:
         await self.client.say("Starting reading rss for {}".format(nickname))
         self.running = True
         self.client.loop.create_task(self.feed_loop(ctx, nickname))
-        #self.client.loop.create_task(self.clear_feed())
+        # self.client.loop.create_task(self.clear_feed())
 
     @commands.command(pass_context=True)
     async def stop_feed(self, ctx):
@@ -33,19 +33,20 @@ class Feeder:
     async def feed_loop(self, ctx, nickname):
         await self.client.wait_until_ready()
         while self.running:
-            skipped = [self.remove_characters(c.get_all_names())
-                       for c in get_data(nickname) if c.is_skipped()]
+            anime_data = [self.remove_characters(c.get_all_names())
+                          for c in get_data(nickname)]
 
-            if len(skipped) != 0:
+            if len(anime_data) != 0:
                 rss = feedparser.parse("http://horriblesubs.info/rss.php?res=1080")
 
                 for entry in rss.entries:
                     title = self.fix_rss_title(entry.title)
-                    if len([s for s in skipped if title in s]) != 0 and title not in self.rss_feed:
+                    if len([s for s in anime_data if title in s]) != 0 and entry not in self.rss_feed:
                         link = requests.get("http://mgnet.me/api/create?m=" + entry.link).json()
-                        data = "{}\nNew series: {}\n[Link]({})".format(ctx.message.author.mention, entry.title, link['shorturl'])
+                        data = "{}\nNew series: {}\n[Link]({})".format(ctx.message.author.mention, entry.title,
+                                                                       link['shorturl'])
                         await self.client.send_message(ctx.message.channel, data)
-                        self.rss_feed.append(title)
+                        self.rss_feed.append(entry)
                 print("Rss has been read")
             await asyncio.sleep(600)
 
@@ -58,12 +59,11 @@ class Feeder:
     def remove_characters(self, st):
         st = st.translate({ord(c): "" for c in "!@#$%^&*()[]{};:,./<>?\|`~-=_+"}).lower()
 
-        #delete_season_pattern
+        # delete_season_pattern
         st = re.sub('s\d+', '', st)
         return " ".join(st.split())
-
 
     def fix_rss_title(self, st):
         new_str = st.replace('[HorribleSubs] ', '')
         pattern = r'(^[a-zA-Z0-9\s!\'@#$%^&*()\[\]\{\}\;\:\,\.\/\<\>\?\|\`\~\-\=\_\+]*) - \d+'
-        return self.remove_characters(re.match(pattern, new_str).group(1)) #st.split(' -')[0])
+        return self.remove_characters(re.match(pattern, new_str).group(1))  # st.split(' -')[0])
