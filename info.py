@@ -21,12 +21,10 @@ class Info:
         #date format - 2002-10-03
         self.start = datetime.datetime.strptime(anime.find('series_start').text, "%Y-%m-%d").date()
         self.weekday = self.start.weekday()
-        print(self.name)
         if anime.find('series_synonyms').text is not None:
             self.synonyms = [c.strip() for c in anime.find('series_synonyms').text.split(';')]
         else:
             self.synonyms = []
-        all_eps = 0
         
         if anime.find('series_status').text == '2':
             all_eps = int(anime.find('series_episodes').text)
