@@ -11,13 +11,19 @@ class Feeder:
         self.rss_feed = []
         self.client = client
         self.running = False
+        self.anime_data_cached = []
 
     @commands.command(pass_context=True)
     async def feed(self, ctx, nickname):
-        data = get_data(nickname)
-        if len(data) == 0:
+        self.anime_data_cached = get_data(nickname)
+        if len(self.anime_data_cached) == 0:
             await self.client.say("No data available")
             return
+
+        await self.client.say("Overwatched animes:")
+        for anime in self.anime_data_cached:
+            await self.client.say(anime.name)
+
         await self.client.say("Starting reading rss for {}".format(nickname))
         self.running = True
         self.client.loop.create_task(self.feed_loop(ctx, nickname))
@@ -33,10 +39,23 @@ class Feeder:
     async def feed_loop(self, ctx, nickname):
         await self.client.wait_until_ready()
         while self.running:
+            anime_data_full = get_data(nickname)
             anime_data = [self.remove_characters(c.get_all_names())
-                          for c in get_data(nickname)]
+                          for c in anime_data_full]
 
             if len(anime_data) != 0:
+                if len(anime_data_full) != len(self.anime_data_cached):
+                    print(anime_data_full)
+                    print(self.anime_data_cached)
+                    new_data = [item.name for item in anime_data_full if item.name not in
+                                [c.name for c in self.anime_data_cached]]
+                    if len(new_data) != 0:
+                        await self.client.send_message(ctx.message.channel, "New animes are found:")
+                        for item in new_data:
+                            await self.client.send_message(ctx.message.channel, item)
+
+                    self.anime_data_cached = anime_data_full
+
                 rss = feedparser.parse("http://horriblesubs.info/rss.php?res=1080")
 
                 for entry in rss.entries:
@@ -48,7 +67,7 @@ class Feeder:
                         await self.client.send_message(ctx.message.channel, data)
                         self.rss_feed.append(entry)
                 print("Rss has been read")
-            await asyncio.sleep(600)
+            await asyncio.sleep(10)
 
     # async def clear_feed(self):
     #     await self.client.wait_until_ready()
@@ -57,7 +76,7 @@ class Feeder:
     #         self.rss_feed.clear()
 
     def remove_characters(self, st):
-        st = st.translate({ord(c): "" for c in "!@#$%^&*()[]{};:,./<>?\|`~-=_+"}).lower()
+        st = st.translate({ord(c): " " for c in "!@#$%^&*()[]{};:,./<>?\|`~-=_+"}).lower()
 
         # delete_season_pattern
         st = re.sub('s\d+', '', st)
