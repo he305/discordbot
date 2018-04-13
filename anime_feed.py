@@ -67,7 +67,7 @@ class Feeder:
                         await self.client.send_message(ctx.message.channel, data)
                         self.rss_feed.append(entry)
                 print("Rss has been read")
-            await asyncio.sleep(10)
+            await asyncio.sleep(600)
 
     # async def clear_feed(self):
     #     await self.client.wait_until_ready()
