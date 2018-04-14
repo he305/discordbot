@@ -1,7 +1,5 @@
-from lxml import etree
 import datetime
 import math
-
 
 days = [
     'понедельник',
@@ -11,27 +9,28 @@ days = [
     'пятницу',
     'субботу',
     'воскресенье'
-];
+]
+
 
 class Info:
     def __init__(self, anime):
-        #Collecting info
+        # Collecting info
         self.name = anime.find('series_title').text
         self.watched = int(anime.find('my_watched_episodes').text)
-        #date format - 2002-10-03
+        # date format - 2002-10-03
         self.start = datetime.datetime.strptime(anime.find('series_start').text, "%Y-%m-%d").date()
         self.weekday = self.start.weekday()
         if anime.find('series_synonyms').text is not None:
             self.synonyms = [c.strip() for c in anime.find('series_synonyms').text.split(';')]
         else:
             self.synonyms = []
-        
+
         if anime.find('series_status').text == '2':
             all_eps = int(anime.find('series_episodes').text)
             self.status = 'ended'
         else:
             today = datetime.date.today()
-            all_eps = math.floor((today - self.start).days/7)+1
+            all_eps = math.floor((today - self.start).days / 7) + 1
             self.status = 'airing'
 
         self.series_count = all_eps

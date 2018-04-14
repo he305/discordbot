@@ -5,18 +5,24 @@ import os
 from music import Music
 from anime_feed import Feeder
 
-
 BOT_PREFIX = ('?', '!')
-TOKEN = os.environ.get('TOKEN') or 'NDMyNTE5MjMzMDQ2NDQ2MTAx.DauehA.UG5dJPPTyrrTGtVxvRZfsnZDFcQ'
+TOKEN = os.environ.get('TOKEN')
 
 client = Bot(command_prefix=BOT_PREFIX)
 client.add_cog(Music(client))
 client.add_cog(Feeder(client))
 
+
 @client.command(name="anime",
                 description="Get anime list for specific user",
                 pass_context=True)
 async def get_anime(ctx, nickname='he3050'):
+    """
+    Get anime list from mal by nickname
+    :param ctx: Discord.Context
+    :param nickname: nickname at myanimelist
+    :return:
+    """
     await client.say("Starting collecting data for {}".format(ctx.message.author.mention))
     animes = get_data(nickname)
 
@@ -30,6 +36,10 @@ async def get_anime(ctx, nickname='he3050'):
 
 @client.command(name="weather")
 async def get_weather():
+    """
+    Get current weather in Elektrostal, RU
+    :return:
+    """
     data = weather()
     await client.say(data)
 
@@ -42,11 +52,21 @@ async def on_ready():
 @client.command(name="сидим",
                 pass_context=True)
 async def sit(ctx):
+    """
+    Send picture for describing main philosophy of life
+    :param ctx: Discord.Context
+    :return:
+    """
     await client.send_file(ctx.message.channel, 'pics/sidim.jpg')
 
 
 @client.command(pass_context=True)
 async def clear(ctx):
+    """
+    Clears 100 channel messages
+    :param ctx: Discord.Context
+    :return:
+    """
     if not ctx.message.author.server_permissions.administrator:
         await client.say("Admin permission required for this command")
         return

@@ -6,7 +6,7 @@ from info import Info
 def get_watching_anime(xml):
     watching_anime = []
     for child in xml[1:]:
-        if (child.find("my_status").text == "1"):
+        if child.find("my_status").text == "1":
             watching_anime.append(child)
     return watching_anime
 
@@ -32,7 +32,7 @@ def main():
     data = get_data(None)
 
     for d in data:
-        print(d.form_full_info())    
+        print(d.form_full_info())
 
 
 if __name__ == "__main__":

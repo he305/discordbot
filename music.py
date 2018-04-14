@@ -4,10 +4,9 @@ import asyncio
 import urllib
 import re
 
-
 if not discord.opus.is_loaded():
     discord.opus.load_opus('opus/lib/libopus.so')
-    #discord.opus.load_opus('opus')
+    # discord.opus.load_opus('opus')
 
 
 class VoiceEntry:
@@ -81,7 +80,7 @@ class Music:
         state.voice = voice
 
     @commands.command(pass_context=True, no_pm=True)
-    async def join(self, ctx, *, channel : discord.Channel):
+    async def join(self, ctx, *, channel: discord.Channel):
         try:
             await self.create_voice_client(channel)
         except discord.ClientException:
@@ -190,7 +189,6 @@ class Music:
             success = await ctx.invoke(self.summon)
             if not success:
                 return
-
 
         try:
             player = await state.voice.create_ytdl_player(song, ytdl_options=opts, after=state.toggle_next)
