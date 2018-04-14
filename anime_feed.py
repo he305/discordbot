@@ -90,12 +90,12 @@ class Feeder:
 
                 for entry in rss.entries:
                     title = self.fix_rss_title(entry.title)
-                    if len([s for s in anime_data if title in s]) != 0 and entry not in self.rss_feed:
+                    if len([s for s in anime_data if title in s]) != 0 and entry.title not in self.rss_feed:
                         link = requests.get("http://mgnet.me/api/create?m=" + entry.link).json()
                         data = "{}\nNew series: {}\n[Link]({})".format(ctx.message.author.mention, entry.title,
                                                                        link['shorturl'])
                         await self.client.send_message(ctx.message.channel, data)
-                        self.rss_feed.append(entry)
+                        self.rss_feed.append(entry.title)
                 print("Rss has been read")
             await asyncio.sleep(600)
 
