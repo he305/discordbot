@@ -16,9 +16,9 @@ class Feeder:
         self.client = client
         self.running = False
         self.anime_data_cached = []
+        self.channel = ""
 
-    @commands.command(pass_context=True)
-    async def feed(self, ctx, nickname):
+    async def feed(self, nickname):
         """
         Starting feeding horriblesubs rss for new anime for watching
         list provided by nickname
@@ -26,22 +26,26 @@ class Feeder:
         :param nickname: nickname at myanimelist
         :return:
         """
-        if not ctx.message.author.server_permissions.administrator:
-            await self.client.send_message(ctx.message.channel, "Admin permission required for this command")
-            return
+        await self.client.wait_until_ready()
+
+        for server in self.client.servers:
+            for channel in server.channels:
+                if channel.name == "anime-feed":
+                    self.channel = channel
+                    break
 
         self.anime_data_cached = get_data(nickname)
         if len(self.anime_data_cached) == 0:
-            await self.client.say("No data available")
+            await self.client.send_message(self.channel, "No data available")
             return
 
-        await self.client.say("Overwatched animes:")
+        await self.client.send_message(self.channel, "Overwatched animes:")
         for anime in self.anime_data_cached:
-            await self.client.say(anime.name)
+            await self.client.send_message(self.channel, anime.name)
 
-        await self.client.say("Starting reading rss for {}".format(nickname))
+        await self.client.send_message(self.channel, "Starting reading rss for {}".format(nickname))
         self.running = True
-        self.client.loop.create_task(self.feed_loop(ctx, nickname))
+        self.client.loop.create_task(self.feed_loop(nickname))
         # self.client.loop.create_task(self.clear_feed())
 
     @commands.command(pass_context=True)
@@ -59,11 +63,10 @@ class Feeder:
             self.rss_feed.clear()
             await self.client.send_message(ctx.message.channel, "Feeding rss stopped")
 
-    async def feed_loop(self, ctx, nickname):
+    async def feed_loop(self, nickname):
         """
         Getting fresh anime data using provided nickname for checking
         horriblesubs rss for getting info about new series
-        :param ctx: Discord.Context
         :param nickname: nickname at myanimelist
         :return:
         """
@@ -80,9 +83,9 @@ class Feeder:
                     new_data = [item.name for item in anime_data_full if item.name not in
                                 [c.name for c in self.anime_data_cached]]
                     if len(new_data) != 0:
-                        await self.client.send_message(ctx.message.channel, "New animes are found:")
+                        await self.client.send_message(self.channel, "New animes are found:")
                         for item in new_data:
-                            await self.client.send_message(ctx.message.channel, item)
+                            await self.client.send_message(self.channel, item)
 
                     self.anime_data_cached = anime_data_full
 
@@ -92,9 +95,9 @@ class Feeder:
                     title = self.fix_rss_title(entry.title)
                     if len([s for s in anime_data if title in s]) != 0 and entry.title not in self.rss_feed:
                         link = requests.get("http://mgnet.me/api/create?m=" + entry.link).json()
-                        data = "{}\nNew series: {}\n[Link]({})".format(ctx.message.author.mention, entry.title,
+                        data = "{}\nNew series: {}\n[Link]({})".format('@everyone', entry.title,
                                                                        link['shorturl'])
-                        await self.client.send_message(ctx.message.channel, data)
+                        await self.client.send_message(self.channel, data)
                         self.rss_feed.append(entry.title)
                 print("Rss has been read")
             await asyncio.sleep(600)
