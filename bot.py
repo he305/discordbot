@@ -49,7 +49,11 @@ async def get_weather():
 
 @client.event
 async def on_ready():
-    pass
+    for server in client.servers:
+        for channel in server.channels:
+            if channel.name == "сидим-пердим":
+                await client.send_message(channel, "Bot has been restarted")
+                break
 
 
 @client.command(name="сидим",
