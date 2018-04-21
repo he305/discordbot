@@ -133,5 +133,5 @@ class Feeder:
         :return:
         """
         new_str = st.replace('[HorribleSubs] ', '')
-        pattern = r'(^[a-zA-Z0-9\s!\'@#$%^&*()\[\]\{\}\;\:\,\.\/\<\>\?\|\`\~\-\=\_\+]*) - \d+'
+        pattern = r'(^[a-zA-Z0-9\s!\'@#$%^&*()\[\]\{\}\;\:\,\.\/\<\>\?\|\`\~\-\=\_\+]*) [-–] \d+'
         return self.remove_characters(re.match(pattern, new_str).group(1))  # st.split(' -')[0])
