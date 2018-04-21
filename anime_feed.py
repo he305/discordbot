@@ -133,4 +133,9 @@ class Feeder:
         """
         new_str = st.replace('[HorribleSubs] ', '')
         pattern = r'(^[a-zA-Z0-9\s!\'@#$%^&*()\[\]\{\}\;\:\,\.\/\<\>\?\|\`\~\-\–\=\_\+]*) [-–] \d+'
-        return self.remove_characters(re.match(pattern, new_str).group(1))  # st.split(' -')[0])
+        try:
+            title = self.remove_characters(re.match(pattern, new_str).group(1))  # st.split(' -')[0])
+            return title
+        except AttributeError:
+            print("Attribute error: " + new_str)
+            return new_str
