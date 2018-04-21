@@ -89,28 +89,24 @@ class Feeder:
 
                     self.anime_data_cached = anime_data_full
 
-                rss = feedparser.parse("http://horriblesubs.info/rss.php?res=1080")
+                rss = feedparser.parse("https://nyaa.si/?page=rss")
 
-                if rss.status == 502:
-                    rss = feedparser.parse("https://erai-raws.info/feed/")
+                pattern = '[HorribleSubs] '
+                if requests.get("http://horriblesubs.info/rss.php?res=1080.xml").status_code == 502:
+                    pattern = '[Erai-raws] '  # if HorribleSubs is offline
 
                 for entry in rss.entries:
-                    title = self.fix_rss_title(entry.title)
+                    if pattern not in entry.title or '1080p' not in entry.title:
+                        continue
+
+                    title = entry.title.replace(pattern, '')
+                    title = self.fix_rss_title(title)
                     if len([s for s in anime_data if title in s]) != 0 and entry.title not in self.rss_feed:
-                        link = entry.link
-                        if "http" not in entry.link:
-                            link = requests.get("http://mgnet.me/api/create?m=" + entry.link).json()['shorturl']
-                        data = "{}\nNew series: {}\n[Link]({})".format('@everyone', entry.title, link)
+                        data = "{}\nNew series: {}\n[Link]({})".format('@everyone', entry.title, entry.link)
                         await self.client.send_message(self.channel, data)
                         self.rss_feed.append(entry.title)
                 print("Rss has been read")
-            await asyncio.sleep(600)
-
-    # async def clear_feed(self):
-    #     await self.client.wait_until_ready()
-    #     while self.running:
-    #         await asyncio.sleep(86400)
-    #         self.rss_feed.clear()
+            await asyncio.sleep(300)
 
     def remove_characters(self, st):
         """
@@ -127,15 +123,14 @@ class Feeder:
     def fix_rss_title(self, st):
         """
         Fix horriblesubs title for comprasion with mal titles
-        Example: [HorribleSubs] Steins Gate 0 - 01 [1080p].mkv -> steins gate 0
+        Example: Steins;Gate 0 - 01 [1080p].mkv -> steins gate 0
         :param st: string to be fixed
         :return:
         """
-        new_str = st.replace('[HorribleSubs] ', '')
         pattern = r'(^[a-zA-Z0-9\s!\'@#$%^&*()\[\]\{\}\;\:\,\.\/\<\>\?\|\`\~\-\–\=\_\+]*) [-–] \d+'
         try:
-            title = self.remove_characters(re.match(pattern, new_str).group(1))  # st.split(' -')[0])
+            title = self.remove_characters(re.match(pattern, st).group(1))
             return title
         except AttributeError:
-            print("Attribute error: " + new_str)
-            return new_str
+            print("Attribute error: " + st)
+            return st
