@@ -99,9 +99,8 @@ class Feeder:
                     if len([s for s in anime_data if title in s]) != 0 and entry.title not in self.rss_feed:
                         link = entry.link
                         if "http" not in entry.link:
-                            link = requests.get("http://mgnet.me/api/create?m=" + entry.link).json()
-                        data = "{}\nNew series: {}\n[Link]({})".format('@everyone', entry.title,
-                                                                       link['shorturl'])
+                            link = requests.get("http://mgnet.me/api/create?m=" + entry.link).json()['shorturl']
+                        data = "{}\nNew series: {}\n[Link]({})".format('@everyone', entry.title, link)
                         await self.client.send_message(self.channel, data)
                         self.rss_feed.append(entry.title)
                 print("Rss has been read")
