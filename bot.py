@@ -5,6 +5,7 @@ import os
 from music import Music
 from anime_feed import Feeder
 from rkn import BlockInfo
+import requests
 
 BOT_PREFIX = ('?', '!')
 TOKEN = os.environ.get('TOKEN')
@@ -53,6 +54,13 @@ async def on_ready():
         for channel in server.channels:
             if channel.name == "сидим-пердим":
                 await client.send_message(channel, "Bot has been restarted")
+
+                headers = {
+                    "Accept": "application/vnd.github.v3+json"
+                }
+
+                data = requests.get("https://api.github.com/repos/he305/discordbot/commits", headers=headers).json()
+                await client.send_message(channel, "Last commit: {}".format(data[0]['commit']['message']))
                 break
 
 

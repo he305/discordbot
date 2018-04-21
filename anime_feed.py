@@ -91,10 +91,15 @@ class Feeder:
 
                 rss = feedparser.parse("http://horriblesubs.info/rss.php?res=1080")
 
+                if rss.status == 502:
+                    rss = feedparser.parse("https://erai-raws.info/feed/")
+
                 for entry in rss.entries:
                     title = self.fix_rss_title(entry.title)
                     if len([s for s in anime_data if title in s]) != 0 and entry.title not in self.rss_feed:
-                        link = requests.get("http://mgnet.me/api/create?m=" + entry.link).json()
+                        link = entry.link
+                        if "http" not in entry.link:
+                            link = requests.get("http://mgnet.me/api/create?m=" + entry.link).json()
                         data = "{}\nNew series: {}\n[Link]({})".format('@everyone', entry.title,
                                                                        link['shorturl'])
                         await self.client.send_message(self.channel, data)

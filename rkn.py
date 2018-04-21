@@ -25,7 +25,7 @@ class BlockInfo:
                 continue
 
             if self.last_ip != data[-1]['y']:
-                sub = data[-1]['y'] - data[-2]['y']
+                sub = data[-1]['y'] - self.last_ip
                 if sub >= minimum:
                     d = datetime.datetime.utcnow()
                     d = d.replace(tzinfo=datetime.timezone.utc).astimezone(tz=pytz.timezone("Europe/Moscow"))
@@ -41,7 +41,3 @@ class BlockInfo:
                     self.last_ip = data[-1]['y']
 
             await asyncio.sleep(300)
-
-if __name__ == "__main__":
-    a = BlockInfo('w')
-    a.run('23')
