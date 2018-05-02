@@ -52,7 +52,7 @@ async def get_weather():
 async def on_ready():
     for server in client.servers:
         for channel in server.channels:
-            if channel.name == "сидим-пердим":
+            if channel.name == "bot-debug":
                 await client.send_message(channel, "Bot has been restarted")
 
                 headers = {

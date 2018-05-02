@@ -39,11 +39,6 @@ class Feeder:
             await self.client.send_message(self.channel, "No data available")
             return
 
-        await self.client.send_message(self.channel, "Overwatched animes:")
-        for anime in self.anime_data_cached:
-            await self.client.send_message(self.channel, anime.name)
-
-        await self.client.send_message(self.channel, "Starting reading rss for {}".format(nickname))
         self.running = True
         self.client.loop.create_task(self.feed_loop(nickname))
         # self.client.loop.create_task(self.clear_feed())
