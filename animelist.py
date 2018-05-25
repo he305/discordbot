@@ -26,7 +26,7 @@ def get_data(nickaname):
         data = requests.get("https://shikimori.org/he3050/list_export/animes.json").json()
         for ur in data:
             if ur["status"] == "watching":
-                anime_data.append(Info(ur["target_title"]))
+                anime_data.append(InfoRaw(ur["target_title"]))
     else:
         root = etree.fromstring(data)
         watching_anime = get_watching_anime(root)
