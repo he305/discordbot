@@ -1,6 +1,7 @@
 from lxml import etree
 import urllib.request
-from info import Info
+import requests
+from info import Info, InfoRaw
 
 
 def get_watching_anime(xml):
@@ -18,12 +19,20 @@ def get_url(url):
 def get_data(nickaname):
     if nickaname is None:
         nickaname = 'he3050'
-    data = get_url("https://myanimelist.net/malappinfo.php?u={}&status=all".format(nickaname))
-    root = etree.fromstring(data)
-    watching_anime = get_watching_anime(root)
+
     anime_data = []
-    for child in watching_anime:
-        anime_data.append(Info(child))
+    data = requests.get("https://myanimelist.net/malappinfo.php?u={}&status=all".format(nickaname))
+    if data.status_code == 404:
+        data = requests.get("https://shikimori.org/he3050/list_export/animes.json")
+        for ur in data:
+            if ur["status"] == "watching":
+                anime_data.append(Info(ur["target_title"]))
+    else:
+        root = etree.fromstring(data)
+        watching_anime = get_watching_anime(root)
+
+        for child in watching_anime:
+            anime_data.append(Info(child))
 
     return anime_data
 

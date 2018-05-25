@@ -52,3 +52,17 @@ class Info:
 
     def __str__(self):
         return self.name
+
+
+class InfoRaw:
+    def __init__(self, anime):
+        self.name = anime
+
+    def get_all_names(self):
+        return self.name
+
+    def __str__(self):
+        return self.name
+
+    def form_full_info(self):
+        return self.name + '\n'
