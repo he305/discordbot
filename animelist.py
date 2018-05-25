@@ -23,7 +23,7 @@ def get_data(nickaname):
     anime_data = []
     data = requests.get("https://myanimelist.net/malappinfo.php?u={}&status=all".format(nickaname))
     if data.status_code == 404:
-        data = requests.get("https://shikimori.org/he3050/list_export/animes.json")
+        data = requests.get("https://shikimori.org/he3050/list_export/animes.json").json()
         for ur in data:
             if ur["status"] == "watching":
                 anime_data.append(Info(ur["target_title"]))
