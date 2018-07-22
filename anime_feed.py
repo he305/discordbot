@@ -85,7 +85,7 @@ class Feeder:
                     self.anime_data_cached = anime_data_full
 
                 try:
-                    r = requests.get('https://nyaa.si/?page=rss')
+                    r = requests.get('https://nyaa.si/?page=rss', timeout=10)
                 except (requests.exceptions.ConnectionError, requests.exceptions.Timeout):
                     print("Nyaa.si is down")
                     await asyncio.sleep(300)
