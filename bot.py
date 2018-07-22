@@ -50,18 +50,19 @@ async def get_weather():
 
 @client.event
 async def on_ready():
-    for server in client.servers:
-        for channel in server.channels:
-            if channel.name == "bot-debug":
-                await client.send_message(channel, "Bot has been restarted")
+    print("Bot has been restarted")
+    # for server in client.servers:
+    #     for channel in server.channels:
+    #         if channel.name == "bot-debug":
+    #             await client.send_message(channel, "Bot has been restarted")
 
-                headers = {
-                    "Accept": "application/vnd.github.v3+json"
-                }
+    #             headers = {
+    #                 "Accept": "application/vnd.github.v3+json"
+    #             }
 
-                data = requests.get("https://api.github.com/repos/he305/discordbot/commits", headers=headers).json()
-                await client.send_message(channel, "Last commit: {}".format(data[0]['commit']['message']))
-                break
+    #             data = requests.get("https://api.github.com/repos/he305/discordbot/commits", headers=headers).json()
+    #             await client.send_message(channel, "Last commit: {}".format(data[0]['commit']['message']))
+    #             break
 
 
 @client.command(name="сидим",
