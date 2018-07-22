@@ -2,7 +2,7 @@ from discord.ext.commands import Bot
 from animelist import get_data
 from forecast import weather
 import os
-from music import Music
+#from music import Music
 from anime_feed import Feeder
 from rkn import BlockInfo
 import requests
@@ -11,7 +11,7 @@ BOT_PREFIX = ('?', '!')
 TOKEN = os.environ.get('TOKEN')
 
 client = Bot(command_prefix=BOT_PREFIX)
-client.add_cog(Music(client))
+#client.add_cog(Music(client))
 client.add_cog(BlockInfo(client))
 feeder = Feeder(client)
 client.loop.create_task(feeder.feed('he3050'))
