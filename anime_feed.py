@@ -84,7 +84,14 @@ class Feeder:
 
                     self.anime_data_cached = anime_data_full
 
-                rss = feedparser.parse("https://nyaa.si/?page=rss")
+                try:
+                    r = requests.get('https://nyaa.si/?page=rss')
+                except (requests.exceptions.ConnectionError, requests.exceptions.Timeout):
+                    print("Nyaa.si is down")
+                    await asyncio.sleep(300)
+                    continue
+                else:
+                    rss = feedparser.parse("https://nyaa.si/?page=rss")
 
                 pattern = '[HorribleSubs] '
                 if requests.get("http://horriblesubs.info/rss.php?res=1080.xml").status_code == 502:
