@@ -1,9 +1,9 @@
 from discord.ext.commands import Bot
-from animelist import get_data
+from anime_list import get_data
 from forecast import weather
 import os
 #from music import Music
-from anime_feed import Feeder
+from anime_feeder import Feeder
 from rkn import BlockInfo
 import requests
 

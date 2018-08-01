@@ -1,5 +1,5 @@
 from discord.ext import commands
-from animelist import get_data
+from anime_list import get_data
 import feedparser
 import asyncio
 import requests
@@ -91,7 +91,7 @@ class Feeder:
                     await asyncio.sleep(300)
                     continue
                 else:
-                    rss = feedparser.parse("https://nyaa.si/?page=rss")
+                    rss = feedparser.parse(r.text)
 
                 pattern = '[HorribleSubs] '
                 if requests.get("http://horriblesubs.info/rss.php?res=1080.xml").status_code == 502:

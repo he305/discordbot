@@ -1,7 +1,7 @@
 from lxml import etree
 import urllib.request
 import requests
-from info import Info, InfoRaw
+from anime_info import Info, InfoRaw
 
 
 def get_watching_anime(xml):
@@ -23,7 +23,11 @@ def get_data(nickaname):
     anime_data = []
     data = requests.get("https://myanimelist.net/malappinfo.php?u={}&status=all".format(nickaname))
     if data.status_code == 404 or data.status_code == 503:
-        data = requests.get("https://shikimori.org/he3050/list_export/animes.json").json()
+        try:
+            data = requests.get("https://shikimori.org/he3050/list_export/animes.json", timeout=10).json()
+        except (requests.exceptions.ConnectionError, requests.exceptions.Timeout):
+            print("Shikimori down")
+            return []
         for ur in data:
             if ur["status"] == "watching":
                 anime_data.append(InfoRaw(ur["target_title"]))
