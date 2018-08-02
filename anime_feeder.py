@@ -1,5 +1,6 @@
 from discord.ext import commands
 from anime_list import get_data
+from vk_api import send_message
 import feedparser
 import asyncio
 import requests
@@ -106,6 +107,7 @@ class Feeder:
                     if len([s for s in anime_data if title in s]) != 0 and entry.title not in self.rss_feed:
                         data = "{}\nNew series: {}\n[Link]({})".format('@everyone', entry.title, entry.link)
                         await self.client.send_message(self.channel, data)
+                        send_message(data)
                         self.rss_feed.append(entry.title)
                 print("Rss has been read")
             await asyncio.sleep(300)
