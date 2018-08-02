@@ -64,7 +64,7 @@ class StreamerFeeder:
                 text = ""
                 if 'text' in res:
                     text = res['text']
-                data = "@everyone/n{}{}{}".format(self.groups[group], '/n' + text, '/n' + url)
+                data = "@everyone\n{}{}{}".format(self.groups[group], '\n' + text, '\n' + url)
 
                 await self.client.send_message(self.channel, data)
 
