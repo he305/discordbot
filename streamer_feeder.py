@@ -61,8 +61,8 @@ class StreamerFeeder:
                     print(self.group_posts[0])
                     print(self.group_posts[1])
 
+                url = ""
                 if 'attachments' in res:
-                    url = ""
                     for att in res['attachments']:
                         if att['type'] == 'photo':
                             url = att['photo']['photo_1280']
