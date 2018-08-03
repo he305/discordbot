@@ -44,7 +44,7 @@ class StreamerFeeder:
 
         self.running = True
         self.client.loop.create_task(self.feed_loop())
-        #self.client.loop.create_task(self.group_feed_loop())
+        self.client.loop.create_task(self.group_feed_loop())
 
     async def group_feed_loop(self):
         while self.running:
@@ -57,6 +57,9 @@ class StreamerFeeder:
 
                 self.group_posts.append(res)
 
+                if len(self.group_posts) > 1:
+                    print(self.group_posts[0])
+                    print(self.group_posts[1])
 
                 if 'attachments' in res:
                     url = ""
