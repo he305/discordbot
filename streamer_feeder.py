@@ -51,12 +51,6 @@ class StreamerFeeder:
             for group in self.groups:
                 res = get_new_posts(int(group))
 
-                if res in self.group_posts:
-                    await asyncio.sleep(300)
-                    continue
-
-                self.group_posts.append(res)
-
                 if len(self.group_posts) > 1:
                     print(self.group_posts[0])
                     print(self.group_posts[1])
@@ -71,7 +65,9 @@ class StreamerFeeder:
                     text = res['text']
                 data = "@everyone\n{}{}{}".format(self.groups[group], '\n' + text, '\n' + url)
 
-                await self.client.send_message(self.channel, data)
+                if data not in self.group_posts:
+                    self.group_posts.append(data)
+                    await self.client.send_message(self.channel, data)
 
                 await asyncio.sleep(300)
 
