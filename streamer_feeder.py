@@ -2,6 +2,7 @@ import requests
 import asyncio
 import os
 import json
+import time
 
 from vk_api import get_new_posts
 
@@ -51,6 +52,7 @@ class StreamerFeeder:
             for group in self.groups:
                 res = get_new_posts(int(group))
 
+
                 if len(self.group_posts) > 1:
                     print(self.group_posts[0])
                     print(self.group_posts[1])
@@ -59,16 +61,19 @@ class StreamerFeeder:
                 if 'attachments' in res:
                     for att in res['attachments']:
                         if att['type'] == 'photo':
-                            url = att['photo']['photo_1280']
+                            url = att['photo']['text'].replace('Original: ', '')
                 text = ""
                 if 'text' in res:
                     text = res['text']
                 data = "@everyone\n{}{}{}".format(self.groups[group], '\n' + text, '\n' + url)
 
-                if data not in self.group_posts:
+                current_time = time.time()
+
+                offset = current_time - int(res['date'])
+                if data not in self.group_posts and offset < 600 * len(self.groups):
                     self.group_posts.append(data)
                     await self.client.send_message(self.channel, data)
-
+                
                 await asyncio.sleep(300)
 
     async def feed_loop(self):
@@ -82,7 +87,7 @@ class StreamerFeeder:
                     self.streamers[self.streamers.index(streamer)] = streamer.replace('_live', '')
 
                 if stream_data['data'] and '_live' not in streamer:
-                    await self.client.send_message(self.channel, "@everyone/n{0} is online".format(streamer))
+                    await self.client.send_message(self.channel, "@everyone\n{0} is online".format(streamer))
                     self.streamers[self.streamers.index(streamer)] = streamer + '_live'
 
                 await asyncio.sleep(60)

@@ -11,9 +11,18 @@ def send_message(message):
     print(r)
 
 def get_new_posts(group):
-    r = requests.get("https://api.vk.com/method/wall.get?count=1&owner_id=-{}&v=5.52&access_token={}".format(group, ACCESS_TOKEN)).json()
+    r = requests.get("https://api.vk.com/method/wall.get?count=2&owner_id=-{}&v=5.52&access_token={}".format(group, ACCESS_TOKEN)).json()
+    if 'is_pinned' in r['response']['items'][0]:
+        return r['response']['items'][1]
     return r['response']['items'][0]
 
+# from pprint import pprint
+# d = get_new_posts(98944499)
+# import time
+
+# cur = time.time()
+
+# print((cur - int(d['date'])))
 # data = []
 
 # i = 0
