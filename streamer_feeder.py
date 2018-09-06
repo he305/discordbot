@@ -4,9 +4,10 @@ import os
 import json
 import time
 
-from vk_api import get_new_posts
+from vk_api import get_new_posts, get_post_comments
 
 CLIENT_ID = os.environ.get('CLIENT_ID') or "jc9acocupd7auyfhcpaxjv5o5dckh5"
+MIN_LIKES = 5
 
 class StreamerFeeder:
     def __init__(self, client):
@@ -15,6 +16,7 @@ class StreamerFeeder:
         self.groups = {}
 
         self.group_posts = []
+        self.comments = []
         self.running = False
         self.channel = None
 
@@ -74,6 +76,27 @@ class StreamerFeeder:
                     self.group_posts.append(data)
                     await self.client.send_message(self.channel, data)
                 
+                comments = get_post_comments(group, res['id'])
+
+                for comment in comments:
+                    if int(comment['likes']['count']) > MIN_LIKES:
+                        url = ""
+                        if 'attachments' in comment:
+                            for att in comment['attachments']:
+                                if att['type'] == 'photo':
+                                    url = att['photo']['text'].replace('Original: ', '')
+                        text = ""
+                        if 'text' in comment:
+                            text = comment['text']
+                        
+                        data = "{}{}{}\nURL: {}".format(self.groups[group], '\n' + text, '\n' + url, "https://vk.com/{}?w=wall-{}_{}_r{}".format(self.groups[group], group, res['id'], comment['id']))
+
+                        if data not in self.comments:
+                            self.comments.append(data)
+                            await self.client.send_message(self.channel, data)
+
+
+
                 await asyncio.sleep(300)
 
     async def feed_loop(self):

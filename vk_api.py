@@ -16,6 +16,22 @@ def get_new_posts(group):
         return r['response']['items'][1]
     return r['response']['items'][0]
 
+def get_post_comments(group, post_id):
+    r = requests.get("https://api.vk.com/method/wall.getComments?count=100&need_likes=1&owner_id=-{}&post_id={}&v=5.52&access_token={}".format(group, post_id, ACCESS_TOKEN)).json()
+
+    count = int(r['response']['count'])
+    if count < 100:
+        return r['response']['items']
+    else:
+        items = r['response']['items']
+        k = 100
+        while k < count:
+            r = requests.get("https://api.vk.com/method/wall.getComments?count=100&offset={}&need_likes=1&owner_id=-{}&post_id={}&v=5.52&access_token={}".format(k, group, post_id, ACCESS_TOKEN)).json()
+            items = items + r['response']['items']
+            k += 100 
+        return items
+
+
 # from pprint import pprint
 # d = get_new_posts(98944499)
 # import time
