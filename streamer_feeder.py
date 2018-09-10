@@ -92,7 +92,7 @@ class StreamerFeeder:
                         if 'text' in comment:
                             text = comment['text']
                         
-                        data = "{}{}\nURL: {}".format(text, '\n' + url, "https://vk.com/{}?w=wall-{}_{}_r{}".format(self.groups[group], group, res['id'], comment['id']))
+                        data = "\n{}{}\nURL: {}".format(text, '\n' + url, "https://vk.com/{}?w=wall-{}_{}_r{}".format(self.groups[group], group, res['id'], comment['id']))
 
                         if data not in self.comments:
                             self.comments.append(data)
