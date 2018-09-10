@@ -6,8 +6,8 @@ import time
 
 from vk_api import get_new_posts, get_post_comments
 
-CLIENT_ID = os.environ.get('CLIENT_ID') or "jc9acocupd7auyfhcpaxjv5o5dckh5"
-MIN_LIKES = 5
+CLIENT_ID = os.environ.get('CLIENT_ID')
+MIN_LIKES = 10
 
 class StreamerFeeder:
     def __init__(self, client):
@@ -89,7 +89,7 @@ class StreamerFeeder:
                         if 'text' in comment:
                             text = comment['text']
                         
-                        data = "{}{}{}\nURL: {}".format(self.groups[group], '\n' + text, '\n' + url, "https://vk.com/{}?w=wall-{}_{}_r{}".format(self.groups[group], group, res['id'], comment['id']))
+                        data = "{}{}URL: {}".format(text, '\n' + url, "https://vk.com/{}?w=wall-{}_{}_r{}".format(self.groups[group], group, res['id'], comment['id']))
 
                         if data not in self.comments:
                             self.comments.append(data)

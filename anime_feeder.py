@@ -99,7 +99,7 @@ class Feeder:
                     pattern = '[Erai-raws] '  # if HorribleSubs is offline
 
                 for entry in rss.entries:
-                    if pattern not in entry.title or '480p' in entry.title:
+                    if pattern not in entry.title or '1080p' not in entry.title:
                         continue
 
                     title = entry.title.replace(pattern, '')
