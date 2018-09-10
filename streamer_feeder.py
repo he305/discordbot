@@ -84,7 +84,10 @@ class StreamerFeeder:
                         if 'attachments' in comment:
                             for att in comment['attachments']:
                                 if att['type'] == 'photo':
-                                    url = att['photo']['text'].replace('Original: ', '')
+                                    for size in att['photo']['sizes']:
+                                        if size['type'] == "x":
+                                            url = size['url']
+                                            break
                         text = ""
                         if 'text' in comment:
                             text = comment['text']
