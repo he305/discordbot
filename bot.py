@@ -18,8 +18,8 @@ client.add_cog(BlockInfo(client))
 anime_feeder = Feeder(client)
 client.loop.create_task(anime_feeder.feed('he3050'))
 
-streamer_feeder = StreamerFeeder(client)
-client.loop.create_task(streamer_feeder.feed())
+#streamer_feeder = StreamerFeeder(client)
+#client.loop.create_task(streamer_feeder.feed())
 
 
 @client.command(name="anime",
