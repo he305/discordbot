@@ -109,9 +109,6 @@ class StreamerFeeder:
                     "https://api.twitch.tv/helix/streams?user_login=" + streamer.replace('_live', ''),
                     headers=self.headers).json()
 
-                if 'data' not in stream_data:
-                    continue
-
                 if not stream_data['data'] and '_live' in streamer:
                     self.streamers[self.streamers.index(streamer)] = streamer.replace('_live', '')
 
