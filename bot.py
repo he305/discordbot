@@ -25,8 +25,6 @@ client.loop.create_task(anime_feeder.feed('he3050'))
 streamer_feeder = StreamerFeeder(client)
 client.loop.create_task(streamer_feeder.feed())
 
-client.loop.create_task(todo())
-
 async def todo():
     tz = pytz.timezone("Europe/Moscow")
     todolist = "1. Еда\n2. Зонт\n3. Флешка"
@@ -35,6 +33,9 @@ async def todo():
         if (current_time.hour == 7 and current_time.minute <= 15 and current_time.weekday() <= 4):
             send_message(todolist)
         await asyncio.sleep(900)
+
+client.loop.create_task(todo())
+
 
 @client.command(name="anime",
                 description="Get anime list for specific user",
