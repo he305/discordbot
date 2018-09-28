@@ -36,9 +36,10 @@ class Feeder:
                     break
 
         self.anime_data_cached = get_data(nickname)
-        if len(self.anime_data_cached) == 0:
-            await self.client.send_message(self.channel, "No data available")
-            return
+        while len(self.anime_data_cached) == 0:
+            await asyncio.sleep(600)
+            await self.client.send_message(self.channel, "Anime list is down, trying to reconnect...")
+            self.anime_data_cached = get_data(nickname)
 
         self.running = True
         self.client.loop.create_task(self.feed_loop(nickname))
