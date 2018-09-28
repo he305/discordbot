@@ -6,6 +6,10 @@ import os
 from anime_feeder import Feeder
 from rkn import BlockInfo
 import requests
+import asyncio
+from datetime import datetime
+import pytz
+from vk_api import send_message
 
 from streamer_feeder import StreamerFeeder
 
@@ -21,6 +25,16 @@ client.loop.create_task(anime_feeder.feed('he3050'))
 streamer_feeder = StreamerFeeder(client)
 client.loop.create_task(streamer_feeder.feed())
 
+client.loop.create_task(todo())
+
+async def todo():
+    tz = pytz.timezone("Europe/Moscow")
+    todolist = "1. Еда\n2. Зонт\n3. Флешка"
+    while True:
+        current_time = datetime.now(tz)
+        if (current_time.hour == 7 and current_time.minute <= 15 and current_time.weekday() <= 4):
+            send_message(todolist)
+        await asyncio.sleep(900)
 
 @client.command(name="anime",
                 description="Get anime list for specific user",
