@@ -19,6 +19,10 @@ class Feeder:
         self.anime_data_cached = []
         self.channel = ""
 
+        #Have to use it because sometimes mal/shikimori titles completely mismatch from nyaa.si titles
+        #Current regex algorithm cannot solve this problem
+        self.special_cases = ["jojo's bizarre adventure golden wind"]
+
     async def feed(self, nickname):
         """
         Starting feeding horriblesubs rss for new anime for watching
@@ -72,6 +76,8 @@ class Feeder:
             anime_data_full = get_data(nickname)
             anime_data = [self.remove_characters(c.get_all_names())
                           for c in anime_data_full]
+            anime_data += self.special_cases #See init
+            
 
             if len(anime_data) != 0:
                 if len(anime_data_full) != len(self.anime_data_cached):

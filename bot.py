@@ -34,7 +34,7 @@ async def todo():
             send_message(todolist)
         await asyncio.sleep(900)
 
-client.loop.create_task(todo())
+#client.loop.create_task(todo())
 
 
 @client.command(name="anime",
