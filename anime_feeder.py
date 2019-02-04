@@ -76,7 +76,6 @@ class Feeder:
             anime_data_full = get_data(nickname)
             while not anime_data_full:
                 await asyncio.sleep(600)
-                await self.client.send_message(self.channel, "Anime list is down, trying to reconnect...")
                 anime_data_full = get_data(nickname)
 
             anime_data = [self.remove_characters(c.get_all_names())
@@ -100,7 +99,6 @@ class Feeder:
                 try:
                     r = requests.get('https://nyaa.si/?page=rss', timeout=10)
                 except (requests.exceptions.ConnectionError, requests.exceptions.Timeout):
-                    await self.client.send_message(self.channel, "Nyaa.si is down")
                     await asyncio.sleep(600)
                     continue
                 else:
