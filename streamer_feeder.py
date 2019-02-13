@@ -76,27 +76,27 @@ class StreamerFeeder:
                     self.group_posts.append(data)
                     await self.client.send_message(self.channel, data)
                 
-                comments = get_post_comments(group, res['id'])
+                # comments = get_post_comments(group, res['id'])
 
-                for comment in comments:
-                    if int(comment['likes']['count']) > MIN_LIKES:
-                        url = ""
-                        if 'attachments' in comment:
-                            for att in comment['attachments']:
-                                if att['type'] == 'photo':
-                                    for size in att['photo']['sizes']:
-                                        if size['type'] == "x":
-                                            url = size['url']
-                                            break
-                        text = ""
-                        if 'text' in comment:
-                            text = comment['text']
+                # for comment in comments:
+                #     if int(comment['likes']['count']) > MIN_LIKES:
+                #         url = ""
+                #         if 'attachments' in comment:
+                #             for att in comment['attachments']:
+                #                 if att['type'] == 'photo':
+                #                     for size in att['photo']['sizes']:
+                #                         if size['type'] == "x":
+                #                             url = size['url']
+                #                             break
+                #         text = ""
+                #         if 'text' in comment:
+                #             text = comment['text']
                         
-                        data = "\n{}{}\nURL: {}".format(text, '\n' + url, "https://vk.com/{}?w=wall-{}_{}_r{}".format(self.groups[group], group, res['id'], comment['id']))
+                #         data = "\n{}{}\nURL: {}".format(text, '\n' + url, "https://vk.com/{}?w=wall-{}_{}_r{}".format(self.groups[group], group, res['id'], comment['id']))
 
-                        if data not in self.comments:
-                            self.comments.append(data)
-                            await self.client.send_message(self.channel, data)
+                #         if data not in self.comments:
+                #             self.comments.append(data)
+                #             await self.client.send_message(self.channel, data)
 
 
 
