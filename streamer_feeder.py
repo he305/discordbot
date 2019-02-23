@@ -13,6 +13,8 @@ class StreamerFeeder:
     def __init__(self, client):
         self.client = client
         self.streamers = []
+        self.goodgame = []
+        self.goodgames_live = []
         self.groups = {}
 
         self.group_posts = []
@@ -35,6 +37,8 @@ class StreamerFeeder:
         with open('groups.json', 'r', encoding="utf8") as f:
             self.groups = json.load(f)
         
+        with open('goodgame.json', 'r', encoding="utf8") as f:
+            self.goodgame = json.load(f)
 
         for streamer in self.streamers:
             print(streamer)
@@ -117,6 +121,17 @@ class StreamerFeeder:
                     self.streamers[self.streamers.index(streamer)] = streamer + '_live'
 
                 await asyncio.sleep(60)
+        
+            for goodgame_stream in self.goodgame:
+                data = requests.get("https://goodgame.ru/api/getggchannelstatus?id=" + goodgame_stream + "&fmt=json").json()
+                if data[goodgame_stream]["status"] == "Live" and goodgame_stream not in goodgames_live:
+                    goodgames_live.append(goodgame_stream)
+                    await self.client.send_message(self.channel, "@everyone\n{0} is online".format(self.goodgame[goodgame_stream]))
+
+                if data[goodgame_stream]["status"] == "Dead" and goodgame_strem in goodgame_lives:
+                    goodgames_live.remove(goodgame_stream)
+
+
 if __name__ == "__main__":
     s = StreamerFeeder(None)
 
