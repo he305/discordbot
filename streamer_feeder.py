@@ -119,17 +119,18 @@ class StreamerFeeder:
                 if stream_data['data'] and '_live' not in streamer:
                     await self.client.send_message(self.channel, "@everyone\n{0} is online".format(streamer))
                     self.streamers[self.streamers.index(streamer)] = streamer + '_live'
-
-                await asyncio.sleep(60)
         
             for goodgame_stream in self.goodgame:
                 data = requests.get("https://goodgame.ru/api/getggchannelstatus?id=" + goodgame_stream + "&fmt=json").json()
-                if data[goodgame_stream]["status"] == "Live" and goodgame_stream not in goodgames_live:
+                if data[goodgame_stream]["status"] == "Live" and goodgame_stream not in self.goodgames_live:
                     goodgames_live.append(goodgame_stream)
                     await self.client.send_message(self.channel, "@everyone\n{0} is online".format(self.goodgame[goodgame_stream]))
 
-                if data[goodgame_stream]["status"] == "Dead" and goodgame_strem in goodgame_lives:
+                if data[goodgame_stream]["status"] == "Dead" and goodgame_strem in self.goodgames_live:
                     goodgames_live.remove(goodgame_stream)
+
+            
+            await asyncio.sleep(60)
 
 
 if __name__ == "__main__":
