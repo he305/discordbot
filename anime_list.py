@@ -15,7 +15,8 @@ def get_data(nickaname):
         print("MAL/Jikan down")
         return []
     for ur in data["anime"]:
-        anime_data.append(Info(ur))
+        if "watching_status" == 1:
+            anime_data.append(Info(ur))
     #Shikimori, just in case
     # try:
     #     data = requests.get("https://shikimori.org/{}/list_export/animes.json".format(nickaname), timeout=10, headers=headers).json()
