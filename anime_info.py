@@ -15,18 +15,18 @@ days = [
 class Info:
     def __init__(self, anime):
         # Collecting info
-        self.name = anime.find('series_title').text
-        self.watched = int(anime.find('my_watched_episodes').text)
+        self.name = anime.find('title').text
+        self.watched = int(anime.find("watched_episodes").text)
         # date format - 2002-10-03
-        self.start = datetime.datetime.strptime(anime.find('series_start').text, "%Y-%m-%d").date()
+        self.start = datetime.datetime.strptime(anime.find('start_date').text, "%Y-%m-%d").date()
         self.weekday = self.start.weekday()
         if anime.find('series_synonyms').text is not None:
             self.synonyms = [c.strip() for c in anime.find('series_synonyms').text.split(';')]
         else:
             self.synonyms = []
 
-        if anime.find('series_status').text == '2':
-            all_eps = int(anime.find('series_episodes').text)
+        if anime.find('airing_status').text == '2':
+            all_eps = int(anime.find('total_episodes').text)
             self.status = 'ended'
         else:
             today = datetime.date.today()

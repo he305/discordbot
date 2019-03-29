@@ -10,13 +10,21 @@ def get_data(nickaname):
 
     anime_data = []
     try:
-        data = requests.get("https://shikimori.org/{}/list_export/animes.json".format(nickaname), timeout=10, headers=headers).json()
+        data = requests.get("https://api.jikan.moe/v3/user/{}/animelist/watching".format(nickaname), timeout=10, headers=headers).json()
     except (requests.exceptions.ConnectionError, requests.exceptions.Timeout):
-        print("Shikimori down")
+        print("MAL/Jikan down")
         return []
-    for ur in data:
-        if ur["status"] == "watching":
-            anime_data.append(InfoRaw(ur["target_title"]))
+    for ur in data["anime"]:
+        anime_data.append(Info(ur))
+    #Shikimori, just in case
+    # try:
+    #     data = requests.get("https://shikimori.org/{}/list_export/animes.json".format(nickaname), timeout=10, headers=headers).json()
+    # except (requests.exceptions.ConnectionError, requests.exceptions.Timeout):
+    #     print("Shikimori down")
+    #     return []
+    # for ur in data:
+    #     if ur["status"] == "watching":
+    #         anime_data.append(InfoRaw(ur["target_title"]))
 
 
     return anime_data
