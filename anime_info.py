@@ -31,13 +31,13 @@ class Info:
             self.synonyms = []
 
         #Kept for better days
-        # if anime['airing_status'] == '2':
-        #     all_eps = int(anime['total_episodes'])
-        #     self.status = 'ended'
-        # else:
-        #     data = requests.get("https://api.jikan.moe/v3/anime/{}/episodes".format(anime["mal_id"]), timeout=10, headers=headers).json()
-        #     all_eps = len(data["episodes"])
-        #     self.status = 'airing'
+        if anime['airing_status'] == '2':
+            #all_eps = int(anime['total_episodes'])
+            self.status = 'ended'
+        else:
+            #data = requests.get("https://api.jikan.moe/v3/anime/{}/episodes".format(anime["mal_id"]), timeout=10, headers=headers).json()
+            #all_eps = len(data["episodes"])
+            self.status = 'airing'
 
         #self.series_count = all_eps
 
