@@ -30,21 +30,22 @@ class Info:
         else:
             self.synonyms = []
 
-        if anime['airing_status'] == '2':
-            all_eps = int(anime['total_episodes'])
-            self.status = 'ended'
-        else:
-            data = requests.get("https://api.jikan.moe/v3/anime/{}/episodes".format(anime["mal_id"]), timeout=10, headers=headers).json()
-            all_eps = len(data["episodes"])
-            self.status = 'airing'
+        #Kept for better days
+        # if anime['airing_status'] == '2':
+        #     all_eps = int(anime['total_episodes'])
+        #     self.status = 'ended'
+        # else:
+        #     data = requests.get("https://api.jikan.moe/v3/anime/{}/episodes".format(anime["mal_id"]), timeout=10, headers=headers).json()
+        #     all_eps = len(data["episodes"])
+        #     self.status = 'airing'
 
-        self.series_count = all_eps
+        #self.series_count = all_eps
 
     def form_full_info(self):
         info = ''
         info += '{0} - {1} серий\n'.format(self.name, str(self.watched))
-        if self.series_count - self.watched != 0:
-            info += '{0} пропущено\n'.format(str(self.series_count - self.watched))
+        # if self.series_count - self.watched != 0:
+        #     info += '{0} пропущено\n'.format(str(self.series_count - self.watched))
         if self.status == 'airing':
             info += 'Новая серия в {0}.\n'.format(days[self.weekday])
         return info
