@@ -15,7 +15,7 @@ def get_data(nickaname):
         print("MAL/Jikan down")
         return []
     for ur in data["anime"]:
-        if "watching_status" == 1:
+        if ur["watching_status"] == 1:
             anime_data.append(Info(ur))
     #Shikimori, just in case
     # try:
