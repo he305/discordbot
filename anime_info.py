@@ -18,7 +18,7 @@ class Info:
         self.name = anime['title']
         self.watched = int(anime["watched_episodes"])
         # date format - 2002-10-03
-        self.start = datetime.datetime.strptime(anime['start_date'], "%Y-%m-%d").date()
+        self.start = datetime.datetime.strptime(anime['start_date'], "%Y-%m-%dT%H:%M:%S%z").date()
         self.weekday = self.start.weekday()
         if anime['series_synonyms'] is not None:
             self.synonyms = [c.strip() for c in anime['series_synonyms'].split(';')]
