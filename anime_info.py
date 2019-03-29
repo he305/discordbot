@@ -21,7 +21,8 @@ class Info:
 
         self.start = parse(anime['start_date']).date()
         self.weekday = self.start.weekday()
-        if anime['series_synonyms'] is not None:
+        
+        if 'series_synonyms' in anime:
             self.synonyms = [c.strip() for c in anime['series_synonyms'].split(';')]
         else:
             self.synonyms = []
