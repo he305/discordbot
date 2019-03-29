@@ -1,6 +1,10 @@
 import datetime
 import math
 from dateutil.parser import *
+import requests
+
+
+headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'}
 
 days = [
     'понедельник',
@@ -12,7 +16,6 @@ days = [
     'воскресенье'
 ]
 
-
 class Info:
     def __init__(self, anime):
         # Collecting info
@@ -21,7 +24,7 @@ class Info:
 
         self.start = parse(anime['start_date']).date()
         self.weekday = self.start.weekday()
-        
+
         if 'series_synonyms' in anime:
             self.synonyms = [c.strip() for c in anime['series_synonyms'].split(';')]
         else:
@@ -31,8 +34,8 @@ class Info:
             all_eps = int(anime['total_episodes'])
             self.status = 'ended'
         else:
-            today = datetime.date.today()
-            all_eps = math.floor((today - self.start).days / 7) + 1
+            data = requests.get("https://api.jikan.moe/v3/anime/{}/episodes".format(anime["mal_id"]), timeout=10, headers=headers).json()
+            all_eps = len(data["episodes"])
             self.status = 'airing'
 
         self.series_count = all_eps
