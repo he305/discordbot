@@ -10,7 +10,7 @@ def get_data(nickaname):
 
     anime_data = []
     try:
-        data = requests.get("https://api.jikan.moe/v3/user/{}/animelist/watching".format(nickaname), timeout=10, headers=headers).json()
+        data = requests.get("https://api.jikan.moe/v3/user/{}/animelist/all".format(nickaname), timeout=10, headers=headers).json()
     except (requests.exceptions.ConnectionError, requests.exceptions.Timeout):
         print("MAL/Jikan down")
         return []
