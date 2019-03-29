@@ -126,7 +126,7 @@ class StreamerFeeder:
                     self.goodgames_live.append(goodgame_stream)
                     await self.client.send_message(self.channel, "@everyone\n{0} is online".format(self.goodgame[goodgame_stream]))
 
-                if data[goodgame_stream]["status"] == "Dead" and goodgame_strem in self.goodgames_live:
+                if data[goodgame_stream]["status"] == "Dead" and goodgame_stream in self.goodgames_live:
                     self.goodgames_live.remove(goodgame_stream)
 
             
