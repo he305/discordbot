@@ -5,8 +5,8 @@ import json
 import time
 
 from vk_api import get_new_posts, get_post_comments
-from hidden_data import CLIENT_ID
 
+CLIENT_ID = os.environ.get('CLIENT_ID')
 MIN_LIKES = 10
 
 class StreamerFeeder:
