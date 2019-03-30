@@ -54,7 +54,7 @@ class Info:
         return self.series_count - self.watched
 
     def get_all_names(self):
-        return self.name + ' ' + " ".join(self.synonyms)
+        return self.name #+ ' ' + " ".join(self.synonyms)
 
     def __str__(self):
         return self.name
