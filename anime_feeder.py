@@ -84,24 +84,23 @@ class Feeder:
             print(anime_data)
 
             if len(anime_data) != 0:
-                if len(anime_data_full) != len(self.anime_data_cached):
-                    print(anime_data_full)
-                    print(self.anime_data_cached)
-                    new_data = [item for item in anime_data_full if item not in self.anime_data_cached]
-                    if len(new_data) != 0:
-                        
-                        await self.client.send_message(self.channel, "New animes are found:")
-                        for item in new_data:
-                            if item.watching_status == 1:
-                                await self.client.send_message(self.channel, "New watching: " + item.name)
-                            if item.watching_status == 3:
-                                await self.client.send_message(self.channel, "New onhold: " + item.name)
-                            if item.watching_status == 2:
-                                await self.client.send_message(self.channel, "New completed: " + item.name + " Score: " + item.score)
-                            if item.watching_status == 4:
-                                await self.client.send_message(self.channel, "New dropped: " + item.name + " Score: " + item.score)
-                            if item.watching_status == 6:
-                                await self.client.send_message(self.channel, "New planned to watch: " + item.name)
+                print(anime_data_full)
+                print(self.anime_data_cached)
+                new_data = [item for item in anime_data_full if item not in self.anime_data_cached]
+                if len(new_data) != 0:
+                    
+                    await self.client.send_message(self.channel, "New animes are found:")
+                    for item in new_data:
+                        if item.watching_status == 1:
+                            await self.client.send_message(self.channel, "New watching: " + item.name)
+                        if item.watching_status == 3:
+                            await self.client.send_message(self.channel, "New onhold: " + item.name)
+                        if item.watching_status == 2:
+                            await self.client.send_message(self.channel, "New completed: " + item.name + " Score: " + item.score)
+                        if item.watching_status == 4:
+                            await self.client.send_message(self.channel, "New dropped: " + item.name + " Score: " + item.score)
+                        if item.watching_status == 6:
+                            await self.client.send_message(self.channel, "New planned to watch: " + item.name)
 
 
                     self.anime_data_cached = anime_data_full
