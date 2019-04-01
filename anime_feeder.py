@@ -84,19 +84,19 @@ class Feeder:
             print(anime_data)
 
             if len(anime_data) != 0:
-                if len(anime_data_full) != len(self.anime_data_cached):
-                    new_data = [item for item in anime_data_full if item not in self.anime_data_cached]
-                else:
-                    new_data = []
-                    for item in anime_data_full:
-                        for item_cached in self.anime_data_cached:
-                            if item.name == item_cached.name:
-                                if item == item_cached:
-                                    print(item.name + " " + item_cached.name)
-                                    continue
-                                else:
-                                    new_data.append(item)
-                                    print(item.name)
+                new_data = []
+                for item in anime_data_full:
+                    found = False
+                    for item_cached in self.anime_data_cached:
+                        if item.name == item_cached.name:
+                            found = True
+                            if item == item_cached:
+                                break
+                            else:
+                                new_data.append(item)
+                                break
+                    if not found:
+                        new_data.append(item)
 
                 if len(new_data) != 0:
                     
@@ -140,7 +140,7 @@ class Feeder:
                         #send_message(data)
                         self.rss_feed.append(entry.title)
                 print("Rss has been read")
-            await asyncio.sleep(15)
+            await asyncio.sleep(300)
 
     def remove_characters(self, st):
         """
