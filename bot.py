@@ -14,7 +14,8 @@ from vk_api import send_message
 from streamer_feeder import StreamerFeeder
 
 BOT_PREFIX = ('?', '!')
-TOKEN = os.environ.get('TOKEN')
+
+from hidden_data import TOKEN
 
 client = Bot(command_prefix=BOT_PREFIX)
 #client.add_cog(Music(client))
@@ -49,11 +50,10 @@ async def get_anime(ctx, nickname='he3050'):
     """
     await client.say("Starting collecting data for {}".format(ctx.message.author.mention))
     animes = get_data(nickname)
-    data = ""
     for anime in animes:
-        data += anime.form_full_info() + '\n'
-
-    await client.say(data)
+        if anime.watching_status == 1:
+            await client.say(anime.form_full_info() + '\n')
+    
     await client.say("Complete {}".format(ctx.message.author.mention))
 
 
