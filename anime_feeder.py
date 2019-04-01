@@ -79,7 +79,7 @@ class Feeder:
                 anime_data_full = get_data(nickname)
 
             anime_data = [self.remove_characters(c.get_all_names())
-                          for c in anime_data_full]
+                          for c in anime_data_full if c.watching_status == 1 or c.watching_status == 3]
             anime_data += self.special_cases #See init
             
 
@@ -87,12 +87,20 @@ class Feeder:
                 if len(anime_data_full) != len(self.anime_data_cached):
                     print(anime_data_full)
                     print(self.anime_data_cached)
-                    new_data = [item.name for item in anime_data_full if item.name not in
-                                [c.name for c in self.anime_data_cached]]
+                    new_data = [item for item in anime_data_full if item not in self.anime_data_cached]
                     if len(new_data) != 0:
+                        
                         await self.client.send_message(self.channel, "New animes are found:")
                         for item in new_data:
-                            await self.client.send_message(self.channel, item)
+                            if item.watching_status == 1:
+                                await self.client.send_message(self.channel, "New watching: " + item.name)
+                            if item.watching_status == 3:
+                                await self.client.send_message(self.channel, "New planned to watch: " + item.name)
+                            if item.watching_status == 2:
+                                await self.client.send_message(self.channel, "New completed: " + item.name + " Score: " + item.score)
+                            if item.watching_status == 4:
+                                await self.client.send_message(self.channel, "New dropped: " + item.name + " Score: " + item.score)
+
 
                     self.anime_data_cached = anime_data_full
 

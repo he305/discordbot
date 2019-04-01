@@ -21,6 +21,8 @@ class Info:
         # Collecting info
         self.name = anime['title']
         self.watched = int(anime["watched_episodes"])
+        self.watching_status = int(anime["watching_status"])
+        self.score = int(anime["score"])
 
         self.start = parse(anime['start_date']).date()
         self.weekday = self.start.weekday()
@@ -54,7 +56,7 @@ class Info:
         return self.series_count - self.watched
 
     def get_all_names(self):
-        return self.name #+ ' ' + " ".join(self.synonyms)
+        return self.name + ' ' + " ".join(self.synonyms)
 
     def __str__(self):
         return self.name
