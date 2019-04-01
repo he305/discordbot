@@ -49,7 +49,7 @@ async def get_anime(ctx, nickname='he3050'):
     """
     await client.say("Starting collecting data for {}".format(ctx.message.author.mention))
     animes = get_data(nickname)
-
+    print(animes)
     data = ""
     for anime in animes:
         data += anime.form_full_info() + '\n'
