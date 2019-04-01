@@ -19,12 +19,12 @@ days = [
 class Info:
     def __init__(self, anime):
         # Collecting info
-        self.name = anime['title']
-        self.watched = int(anime["watched_episodes"])
-        self.watching_status = int(anime["watching_status"])
+        self.name = anime['anime_title']
+        self.watched = int(anime["num_watched_episodes"])
+        self.watching_status = int(anime["status"])
         self.score = int(anime["score"])
 
-        self.start = parse(anime['start_date']).date()
+        self.start = parse(anime['anime_start_date_string']).date()
         self.weekday = self.start.weekday()
 
         if 'series_synonyms' in anime:
@@ -33,7 +33,7 @@ class Info:
             self.synonyms = []
 
         #Kept for better days
-        if anime['airing_status'] == '2':
+        if anime['anime_airing_status'] == '2':
             #all_eps = int(anime['total_episodes'])
             self.status = 'ended'
         else:
