@@ -87,20 +87,21 @@ class Feeder:
                 print(anime_data_full)
                 print(self.anime_data_cached)
                 new_data = [item for item in anime_data_full if item not in self.anime_data_cached]
+                
                 if len(new_data) != 0:
                     
                     await self.client.send_message(self.channel, "New animes are found:")
                     for item in new_data:
                         if item.watching_status == 1:
-                            await self.client.send_message(self.channel, "New watching: " + item.name)
+                            await self.client.send_message(self.channel, "New watching: {}".format(item.name))
                         if item.watching_status == 3:
-                            await self.client.send_message(self.channel, "New onhold: " + item.name)
+                            await self.client.send_message(self.channel, "New onhold: {}".format(item.name))
                         if item.watching_status == 2:
-                            await self.client.send_message(self.channel, "New completed: " + item.name + " Score: " + item.score)
+                            await self.client.send_message(self.channel, "New completed: {} Score: {}".format(item.name, item.score))
                         if item.watching_status == 4:
-                            await self.client.send_message(self.channel, "New dropped: " + item.name + " Score: " + item.score)
+                            await self.client.send_message(self.channel, "New dropped: {} Score: {}".format(item.name, item.score))
                         if item.watching_status == 6:
-                            await self.client.send_message(self.channel, "New planned to watch: " + item.name)
+                            await self.client.send_message(self.channel, "New planned to watch: {}".format(item.name))
 
 
                     self.anime_data_cached = anime_data_full
