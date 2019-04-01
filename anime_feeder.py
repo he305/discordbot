@@ -92,6 +92,7 @@ class Feeder:
                         for item_cached in self.anime_data_cached:
                             if item.name == item_cached.name:
                                 if item == item_cached:
+                                    print(item.name + " " + item_cached.name)
                                     continue
                                 else:
                                     new_data.append(item)
