@@ -86,8 +86,18 @@ class Feeder:
             if len(anime_data) != 0:
                 print(anime_data_full)
                 print(self.anime_data_cached)
-                new_data = [item for item in anime_data_full if item not in self.anime_data_cached]
-                
+                if len(anime_data_full) != len(self.anime_data_cached):
+                    new_data = [item for item in anime_data_full if item not in self.anime_data_cached]
+                else:
+                    new_data = []
+                    for item in anime_data_full:
+                        for item_cached in self.anime_data_cached:
+                            if item.name == item_cached.name:
+                                if item == item_cached:
+                                    continue
+                                else:
+                                    new_data.append(item)
+
                 if len(new_data) != 0:
                     
                     await self.client.send_message(self.channel, "New animes are found:")
