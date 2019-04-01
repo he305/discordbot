@@ -81,7 +81,7 @@ class Feeder:
             anime_data = [self.remove_characters(c.get_all_names())
                           for c in anime_data_full if c.watching_status == 1 or c.watching_status == 3]
             anime_data += self.special_cases #See init
-            
+            print(anime_data)
 
             if len(anime_data) != 0:
                 if len(anime_data_full) != len(self.anime_data_cached):
@@ -128,7 +128,7 @@ class Feeder:
                         #send_message(data)
                         self.rss_feed.append(entry.title)
                 print("Rss has been read")
-            await asyncio.sleep(300)
+            await asyncio.sleep(15)
 
     def remove_characters(self, st):
         """
