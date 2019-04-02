@@ -114,30 +114,30 @@ class Feeder:
 
                 self.anime_data_cached = anime_data_full
 
-                try:
-                    r = requests.get('https://nyaa.si/?page=rss', timeout=10)
-                except (requests.exceptions.ConnectionError, requests.exceptions.Timeout):
-                    await asyncio.sleep(600)
+            try:
+                r = requests.get('https://nyaa.si/?page=rss', timeout=10)
+            except (requests.exceptions.ConnectionError, requests.exceptions.Timeout):
+                await asyncio.sleep(600)
+                continue
+            else:
+                rss = feedparser.parse(r.text)
+
+            pattern = '[HorribleSubs] '
+            if requests.get("http://horriblesubs.info/rss.php?res=1080.xml").status_code == 502:
+                pattern = '[Erai-raws] '  # if HorribleSubs is offline
+
+            for entry in rss.entries:
+                if pattern not in entry.title or '1080p' not in entry.title:
                     continue
-                else:
-                    rss = feedparser.parse(r.text)
 
-                pattern = '[HorribleSubs] '
-                if requests.get("http://horriblesubs.info/rss.php?res=1080.xml").status_code == 502:
-                    pattern = '[Erai-raws] '  # if HorribleSubs is offline
-
-                for entry in rss.entries:
-                    if pattern not in entry.title or '1080p' not in entry.title:
-                        continue
-
-                    title = entry.title.replace(pattern, '')
-                    title = self.fix_rss_title(title)
-                    if [s for s in anime_data if title in s] and entry.title not in self.rss_feed:
-                        data = "{}\nNew series: {}\n[Link]({})".format('@everyone', entry.title, entry.link)
-                        await self.client.send_message(self.channel, data)
-                        #send_message(data)
-                        self.rss_feed.append(entry.title)
-                print("Rss has been read")
+                title = entry.title.replace(pattern, '')
+                title = self.fix_rss_title(title)
+                if [s for s in anime_data if title in s] and entry.title not in self.rss_feed:
+                    data = "{}\nNew series: {}\n[Link]({})".format('@everyone', entry.title, entry.link)
+                    await self.client.send_message(self.channel, data)
+                    #send_message(data)
+                    self.rss_feed.append(entry.title)
+            print("Rss has been read")
             await asyncio.sleep(300)
 
     def remove_characters(self, st):
