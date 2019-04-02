@@ -1,11 +1,11 @@
+from hidden_data import TOKEN
+
 from discord.ext.commands import Bot
 from anime_list import get_data
 from forecast import weather
-import os
 #from music import Music
 from anime_feeder import Feeder
 from rkn import BlockInfo
-import requests
 import asyncio
 from datetime import datetime
 import pytz
@@ -15,7 +15,6 @@ from streamer_feeder import StreamerFeeder
 
 BOT_PREFIX = ('?', '!')
 
-from hidden_data import TOKEN
 
 client = Bot(command_prefix=BOT_PREFIX)
 #client.add_cog(Music(client))

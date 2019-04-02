@@ -1,10 +1,9 @@
 import requests
 import asyncio
-import os
 import json
 import time
 
-from vk_api import get_new_posts, get_post_comments
+from vk_api import get_new_posts
 
 from hidden_data import CLIENT_ID
 MIN_LIKES = 10

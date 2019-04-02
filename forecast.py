@@ -13,9 +13,6 @@ def get_location_data():
 
 
 def weather():
-    location_data = get_location_data()
-    lat = location_data['latitude']
-    lon = location_data['longitude']
     params = {
         'type': 'like',
         'units': 'metric',

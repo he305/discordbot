@@ -1,8 +1,4 @@
 import requests
-import os
-import datetime
-
-from time import sleep
 
 from hidden_data import ACCESS_TOKEN
 
@@ -21,7 +17,7 @@ def get_post_comments(group, post_id):
 
     count = int(r['response']['count'])
     if count < 100:
-        return r['response']['items']
+        items = r['response']['items']
     else:
         items = r['response']['items']
         k = 100
@@ -29,33 +25,4 @@ def get_post_comments(group, post_id):
             r = requests.get("https://api.vk.com/method/wall.getComments?count=100&offset={}&need_likes=1&owner_id=-{}&post_id={}&v=5.84&access_token={}".format(k, group, post_id, ACCESS_TOKEN)).json()
             items = items + r['response']['items']
             k += 100 
-        return items
-
-
-# from pprint import pprint
-# d = get_new_posts(98944499)
-# import time
-
-# cur = time.time()
-
-# print((cur - int(d['date'])))
-# data = []
-
-# i = 0
-# while True:
-#     res = get_new_posts(98839886)
-#     print("It {}, length {}".format(i, len(data)))
-#     i += 1
-    
-#     if res in data:
-#         sleep(10)
-#         continue
-#     data.append(res)
-
-#     if len(data) > 1:
-#         print(data[0])
-#         print(data[1])
-#         break
-    
-#     print("It {}, length {}".format(i, len(data)))
-#     sleep(10)
+    return items

@@ -1,5 +1,5 @@
 import requests
-from anime_info import Info, InfoRaw
+from anime_info import Info
 
 #02.11.2018 found out that requests.get to shikimori returns 403 forbidden without user-agent header
 headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'}

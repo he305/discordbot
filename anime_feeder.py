@@ -1,6 +1,5 @@
 from discord.ext import commands
 from anime_list import get_data
-from vk_api import send_message
 import feedparser
 import asyncio
 import requests
@@ -83,38 +82,37 @@ class Feeder:
             anime_data += self.special_cases #See init
             print(anime_data)
 
-            if len(anime_data) != 0:
-                new_data = []
-                for item in anime_data_full:
-                    found = False
-                    for item_cached in self.anime_data_cached:
-                        if item.name == item_cached.name:
-                            found = True
-                            if item == item_cached:
-                                break
-                            else:
-                                new_data.append(item)
-                                break
-                    if not found:
-                        new_data.append(item)
+            new_data = []
+            for item in anime_data_full:
+                found = False
+                for item_cached in self.anime_data_cached:
+                    if item.name == item_cached.name:
+                        found = True
+                        if item == item_cached:
+                            break
+                        else:
+                            new_data.append(item)
+                            break
+                if not found:
+                    new_data.append(item)
 
-                if len(new_data) != 0:
-                    
-                    await self.client.send_message(self.channel, "New animes are found:")
-                    for item in new_data:
-                        if item.watching_status == 1:
-                            await self.client.send_message(self.channel, "New watching: {}".format(item.name))
-                        if item.watching_status == 3:
-                            await self.client.send_message(self.channel, "New onhold: {}".format(item.name))
-                        if item.watching_status == 2:
-                            await self.client.send_message(self.channel, "New completed: {} Score: {}".format(item.name, item.score))
-                        if item.watching_status == 4:
-                            await self.client.send_message(self.channel, "New dropped: {} Score: {}".format(item.name, item.score))
-                        if item.watching_status == 6:
-                            await self.client.send_message(self.channel, "New planned to watch: {}".format(item.name))
+            if new_data:
+                
+                await self.client.send_message(self.channel, "New animes are found:")
+                for item in new_data:
+                    if item.watching_status == 1:
+                        await self.client.send_message(self.channel, "New watching: {}".format(item.name))
+                    if item.watching_status == 3:
+                        await self.client.send_message(self.channel, "New onhold: {}".format(item.name))
+                    if item.watching_status == 2:
+                        await self.client.send_message(self.channel, "New completed: {} Score: {}".format(item.name, item.score))
+                    if item.watching_status == 4:
+                        await self.client.send_message(self.channel, "New dropped: {} Score: {}".format(item.name, item.score))
+                    if item.watching_status == 6:
+                        await self.client.send_message(self.channel, "New planned to watch: {}".format(item.name))
 
 
-                    self.anime_data_cached = anime_data_full
+                self.anime_data_cached = anime_data_full
 
                 try:
                     r = requests.get('https://nyaa.si/?page=rss', timeout=10)
@@ -134,7 +132,7 @@ class Feeder:
 
                     title = entry.title.replace(pattern, '')
                     title = self.fix_rss_title(title)
-                    if len([s for s in anime_data if title in s]) != 0 and entry.title not in self.rss_feed:
+                    if [s for s in anime_data if title in s] and entry.title not in self.rss_feed:
                         data = "{}\nNew series: {}\n[Link]({})".format('@everyone', entry.title, entry.link)
                         await self.client.send_message(self.channel, data)
                         #send_message(data)
