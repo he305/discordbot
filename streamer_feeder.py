@@ -129,7 +129,7 @@ class StreamerFeeder:
                     if data[goodgame_stream]["status"] == "Dead" and goodgame_stream in self.goodgames_live:
                         self.goodgames_live.remove(goodgame_stream)
                 except (requests.exceptions.ConnectionError, requests.exceptions.Timeout):
-                    print("Goodgame timed out"))
+                    print("Goodgame timed out")
 
             
             await asyncio.sleep(60)
