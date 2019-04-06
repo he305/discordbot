@@ -28,6 +28,11 @@ class Info:
         else:
             self.synonyms = []
 
+        if 'anime_image_path' in anime:
+            self.image = anime['anime_image_path']
+        else:
+            self.image = ""
+
         #Kept for better days
         if anime['anime_airing_status'] == '2':
             #all_eps = int(anime['total_episodes'])
@@ -46,6 +51,7 @@ class Info:
         #     info += '{0} пропущено\n'.format(str(self.series_count - self.watched))
         if self.status == 'airing':
             info += 'Новая серия в {0}.\n'.format(days[self.weekday])
+        info += self.image
         return info
 
     def get_all_names(self):
