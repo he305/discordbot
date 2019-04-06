@@ -120,13 +120,16 @@ class StreamerFeeder:
                     self.streamers[self.streamers.index(streamer)] = streamer + '_live'
         
             for goodgame_stream in self.goodgame:
-                data = requests.get("https://goodgame.ru/api/getggchannelstatus?id=" + goodgame_stream + "&fmt=json").json()
-                if data[goodgame_stream]["status"] == "Live" and goodgame_stream not in self.goodgames_live:
-                    self.goodgames_live.append(goodgame_stream)
-                    await self.client.send_message(self.channel, "@everyone\n{0} is online".format(self.goodgame[goodgame_stream]))
+                try:
+                    data = requests.get("https://goodgame.ru/api/getggchannelstatus?id=" + goodgame_stream + "&fmt=json", timeout=10).json()
+                    if data[goodgame_stream]["status"] == "Live" and goodgame_stream not in self.goodgames_live:
+                        self.goodgames_live.append(goodgame_stream)
+                        await self.client.send_message(self.channel, "@everyone\n{0} is online".format(self.goodgame[goodgame_stream]))
 
-                if data[goodgame_stream]["status"] == "Dead" and goodgame_stream in self.goodgames_live:
-                    self.goodgames_live.remove(goodgame_stream)
+                    if data[goodgame_stream]["status"] == "Dead" and goodgame_stream in self.goodgames_live:
+                        self.goodgames_live.remove(goodgame_stream)
+                except (requests.exceptions.ConnectionError, requests.exceptions.Timeout):
+                    print("Goodgame timed out"))
 
             
             await asyncio.sleep(60)
