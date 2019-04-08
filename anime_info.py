@@ -69,15 +69,18 @@ class Info:
         return False
 
     def get_synonyms(self):
-        data = requests.get("https://myanimelist.net/anime/{}".format(self.id)).text
-        soup = BeautifulSoup(data, 'html.parser')
+        try:
+            data = requests.get("https://myanimelist.net/anime/{}".format(self.id), timeout=10).text
+            soup = BeautifulSoup(data, 'html.parser')
 
-        td = soup.find("td", class_="borderClass")
-        divs = td.find_all("div", class_="spaceit_pad")
+            td = soup.find("td", class_="borderClass")
+            divs = td.find_all("div", class_="spaceit_pad")
 
-        if divs:
-            for div in divs:
-                self.synonyms.append(div.contents[2].strip())
+            if divs:
+                for div in divs:
+                    self.synonyms.append(div.contents[2].strip())
+        except (requests.exceptions.ConnectionError, requests.exceptions.Timeout):
+            print("Mal anime parsing timed out")
 
 class InfoRaw:
     def __init__(self, anime):

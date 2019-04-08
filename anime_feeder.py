@@ -43,6 +43,11 @@ class Feeder:
             await asyncio.sleep(600)
             await self.client.send_message(self.channel, "Anime list is down, trying to reconnect...")
             self.anime_data_cached = get_data(nickname)
+        
+        for anime in self.anime_data_cached:
+            if anime.watching_status == 1 or anime.watching_status == 6:
+                anime.get_synonyms()
+                await asyncio.sleep(3)
 
         self.running = True
         self.client.loop.create_task(self.feed_loop(nickname))
@@ -77,17 +82,6 @@ class Feeder:
                 await asyncio.sleep(600)
                 anime_data_full = get_data(nickname)
 
-            for anime in anime_data_full:
-                if anime.watching_status == 1 or anime.watching_status == 6:
-                    anime.get_synonyms()
-                    await asyncio.sleep(3)
-
-            anime_data = [self.remove_characters(c.get_all_names())
-                          for c in anime_data_full if c.watching_status == 1 or c.watching_status == 6]
-                
-            anime_data += self.special_cases #See init
-            print(anime_data)
-
             new_data = []
             for item in anime_data_full:
                 found = False
@@ -108,22 +102,32 @@ class Feeder:
                 for item in new_data:
                     if item.watching_status == 1:
                         await self.client.send_message(self.channel, "New watching: {}".format(item.name))
-                    if item.watching_status == 3:
-                        await self.client.send_message(self.channel, "New onhold: {}".format(item.name))
                     if item.watching_status == 2:
                         await self.client.send_message(self.channel, "New completed: {} Score: {}".format(item.name, item.score))
+                    if item.watching_status == 3:
+                        await self.client.send_message(self.channel, "New onhold: {}".format(item.name))
                     if item.watching_status == 4:
                         await self.client.send_message(self.channel, "New dropped: {} Score: {}".format(item.name, item.score))
                     if item.watching_status == 6:
                         await self.client.send_message(self.channel, "New planned to watch: {}".format(item.name))
 
-
                 self.anime_data_cached = anime_data_full
+                for anime in self.anime_data_cached:
+                    if anime.watching_status == 1 or anime.watching_status == 6:
+                        anime.get_synonyms()
+                        await asyncio.sleep(3)
+
+            anime_data = [self.remove_characters(c.get_all_names())
+                          for c in self.anime_data_cached if c.watching_status == 1 or c.watching_status == 6]
+                
+            anime_data += self.special_cases #See init
+            print(anime_data)
 
             try:
                 r = requests.get('https://nyaa.si/?page=rss', timeout=10)
             except (requests.exceptions.ConnectionError, requests.exceptions.Timeout):
                 await asyncio.sleep(600)
+                print("Nyaa.si is down")
                 continue
             else:
                 rss = feedparser.parse(r.text)
