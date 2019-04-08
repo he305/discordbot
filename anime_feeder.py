@@ -20,7 +20,7 @@ class Feeder:
 
         #Have to use it because sometimes mal/shikimori titles completely mismatch from nyaa.si titles
         #Current regex algorithm cannot solve this problem
-        self.special_cases = ["jojo's bizarre adventure golden wind"]
+        self.special_cases = []
 
     async def feed(self, nickname):
         """
@@ -77,8 +77,14 @@ class Feeder:
                 await asyncio.sleep(600)
                 anime_data_full = get_data(nickname)
 
+            for anime in anime_data_full:
+                if anime.watching_status == 1 or anime.watching_status == 6:
+                    anime.get_synonyms()
+                    await asyncio.sleep(3)
+
             anime_data = [self.remove_characters(c.get_all_names())
                           for c in anime_data_full if c.watching_status == 1 or c.watching_status == 6]
+                
             anime_data += self.special_cases #See init
             print(anime_data)
 
@@ -146,7 +152,7 @@ class Feeder:
         :param st: string to be replaced
         :return:
         """
-        st = st.translate({ord(c): " " for c in "!@#$%^&*()[]{};:,./<>?\|`~-=_+"}).lower()
+        st = st.translate({ord(c): " " for c in "'!@#$%^&*()[]{};:,./<>?\|`~-=_+"}).lower()
 
         # delete_season_pattern
         st = re.sub('s\d+', '', st)

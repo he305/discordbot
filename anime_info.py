@@ -1,4 +1,6 @@
 from dateutil.parser import parse
+import requests
+from bs4 import BeautifulSoup
 
 headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'}
 
@@ -15,6 +17,7 @@ days = [
 class Info:
     def __init__(self, anime):
         # Collecting info
+        self.id = int(anime["anime_id"])
         self.name = anime['anime_title']
         self.watched = int(anime["num_watched_episodes"])
         self.watching_status = int(anime["status"])
@@ -65,6 +68,16 @@ class Info:
             return self.name == other.name and self.watching_status == other.watching_status
         return False
 
+    def get_synonyms(self):
+        data = requests.get("https://myanimelist.net/anime/{}".format(self.id)).text
+        soup = BeautifulSoup(data, 'html.parser')
+
+        td = soup.find("td", class_="borderClass")
+        divs = td.find_all("div", class_="spaceit_pad")
+
+        if divs:
+            for div in divs:
+                self.synonyms.append(div.contents[2].strip())
 
 class InfoRaw:
     def __init__(self, anime):
