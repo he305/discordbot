@@ -43,6 +43,7 @@ class StreamerFeeder:
             self.goodgame = json.load(f)
 
         for streamer in self.streamers:
+            log.info(streamer)
             print(streamer)
 
         for server in self.client.servers:
@@ -132,6 +133,7 @@ class StreamerFeeder:
                     if data[goodgame_stream]["status"] == "Dead" and goodgame_stream in self.goodgames_live:
                         self.goodgames_live.remove(goodgame_stream)
                 except (requests.exceptions.ConnectionError, requests.exceptions.Timeout):
+                    log.warning("Goodgame timed out")
                     print("Goodgame timed out")
 
             

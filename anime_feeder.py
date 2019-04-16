@@ -4,12 +4,10 @@ import feedparser
 import asyncio
 import requests
 import re
+from proxy import Proxy
 
 import logging
 log = logging.getLogger(__name__)
-
-from hidden_data import proxyDict
-
 
 class Feeder:
     def __init__(self, client):
@@ -17,6 +15,7 @@ class Feeder:
 
         :param client: Discord.Client
         """
+        self.proxy = Proxy()
         self.rss_feed = []
         self.client = client
         self.running = False
@@ -125,18 +124,25 @@ class Feeder:
                           for c in self.anime_data_cached if c.watching_status == 1 or c.watching_status == 6]
                 
             anime_data += self.special_cases #See init
-            log.info("Anime data: {}".format(anime_data))
+            #log.info("Anime data: {}".format(anime_data))
             print(anime_data)
 
-            try:
-                r = requests.get('https://nyaa.si/?page=rss', timeout=10, proxies=proxyDict)
-            except (requests.exceptions.ConnectionError, requests.exceptions.Timeout):
-                await asyncio.sleep(600)
-                log.warning("Nyaa.si is down")
-                print("Nyaa.si is down")
-                continue
-            else:
-                rss = feedparser.parse(r.text)
+            rss = []
+            i = 0
+            while not rss:
+                try:
+                    r = requests.get('https://nyaa.si/?page=rss', timeout=10, proxies=self.proxy.current)
+                except (requests.exceptions.ProxyError, requests.exceptions.ConnectionError, requests.exceptions.Timeout):
+                    if i > 5:
+                        self.proxy.get_new()
+                        i = 0
+                    print("Failed to load Nyaa.si")
+                    log.warning("Failed to load Nyaa.si")
+                    self.proxy.changeCurrent()
+                    i += 1
+                    continue
+                else:
+                    rss = feedparser.parse(r.text)
 
             pattern = '[HorribleSubs] '
             if requests.get("http://horriblesubs.info/rss.php?res=1080.xml").status_code == 502:
@@ -155,7 +161,7 @@ class Feeder:
                     self.rss_feed.append(entry.title)
             log.info("Rss has been read")
             print("Rss has been read")
-            await asyncio.sleep(300)
+            await asyncio.sleep(60)
 
     def remove_characters(self, st):
         """
