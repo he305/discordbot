@@ -8,6 +8,9 @@ from vk_api import get_new_posts
 from hidden_data import CLIENT_ID
 MIN_LIKES = 10
 
+import logging
+log = logging.getLogger(__name__)
+
 class StreamerFeeder:
     def __init__(self, client):
         self.client = client

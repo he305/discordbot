@@ -1,5 +1,5 @@
 from hidden_data import TOKEN
-
+import logging
 from discord.ext.commands import Bot
 from anime_list import get_data
 from forecast import weather
@@ -15,6 +15,7 @@ from streamer_feeder import StreamerFeeder
 
 BOT_PREFIX = ('?', '!')
 
+logging.basicConfig(filename='logging.log', level=logging.DEBUG, format='%(asctime)s %(message)s', datefmt='%d/%m/%Y %H:%M:%S')
 
 client = Bot(command_prefix=BOT_PREFIX)
 #client.add_cog(Music(client))

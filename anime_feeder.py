@@ -5,6 +5,11 @@ import asyncio
 import requests
 import re
 
+import logging
+log = logging.getLogger(__name__)
+
+from hidden_data import proxyDict
+
 
 class Feeder:
     def __init__(self, client):
@@ -31,7 +36,6 @@ class Feeder:
         :return:
         """
         await self.client.wait_until_ready()
-
         for server in self.client.servers:
             for channel in server.channels:
                 if channel.name == "anime-feed":
@@ -121,12 +125,14 @@ class Feeder:
                           for c in self.anime_data_cached if c.watching_status == 1 or c.watching_status == 6]
                 
             anime_data += self.special_cases #See init
+            log.info("Anime data: {}".format(anime_data))
             print(anime_data)
 
             try:
-                r = requests.get('https://nyaa.si/?page=rss', timeout=10)
+                r = requests.get('https://nyaa.si/?page=rss', timeout=10, proxies=proxyDict)
             except (requests.exceptions.ConnectionError, requests.exceptions.Timeout):
                 await asyncio.sleep(600)
+                log.warning("Nyaa.si is down")
                 print("Nyaa.si is down")
                 continue
             else:
@@ -147,6 +153,7 @@ class Feeder:
                     await self.client.send_message(self.channel, data)
                     #send_message(data)
                     self.rss_feed.append(entry.title)
+            log.info("Rss has been read")
             print("Rss has been read")
             await asyncio.sleep(300)
 
