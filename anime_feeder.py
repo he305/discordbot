@@ -140,6 +140,7 @@ class Feeder:
                     log.warning("Failed to load Nyaa.si")
                     self.proxy.changeCurrent()
                     i += 1
+                    await asyncio.sleep(5)
                     continue
                 else:
                     rss = feedparser.parse(r.text)
@@ -161,7 +162,7 @@ class Feeder:
                     self.rss_feed.append(entry.title)
             log.info("Rss has been read")
             print("Rss has been read")
-            await asyncio.sleep(60)
+            await asyncio.sleep(300)
 
     def remove_characters(self, st):
         """
