@@ -112,17 +112,24 @@ class StreamerFeeder:
     async def feed_loop(self):
         while self.running:
             for streamer in self.streamers:
-                stream_data = requests.get(
-                    "https://api.twitch.tv/helix/streams?user_login=" + streamer.replace('_live', ''),
-                    headers=self.headers).json()
+                try:
+                    stream_data = requests.get(
+                        "https://api.twitch.tv/helix/streams?user_login=" + streamer.replace('_live', ''),
+                        timeout=10,
+                        headers=self.headers).json()
 
-                if not stream_data['data'] and '_live' in streamer:
-                    self.streamers[self.streamers.index(streamer)] = streamer.replace('_live', '')
+                    if not stream_data['data'] and '_live' in streamer:
+                        self.streamers[self.streamers.index(streamer)] = streamer.replace('_live', '')
 
-                if stream_data['data'] and '_live' not in streamer:
-                    await self.client.send_message(self.channel, "@everyone\n{0} is online".format(streamer))
-                    self.streamers[self.streamers.index(streamer)] = streamer + '_live'
-        
+                    if stream_data['data'] and '_live' not in streamer:
+                        await self.client.send_message(self.channel, "@everyone\n{0} is online".format(streamer))
+                        self.streamers[self.streamers.index(streamer)] = streamer + '_live'
+                except (requests.exceptions.ConnectionError, requests.exceptions.Timeout):
+                    print("Failed to load twitch")
+                    log.warning("Goodgame timed out")
+
+                await asyncio.sleep(5)
+
             for goodgame_stream in self.goodgame:
                 try:
                     data = requests.get("https://goodgame.ru/api/getggchannelstatus?id=" + goodgame_stream + "&fmt=json", timeout=10).json()
@@ -136,7 +143,8 @@ class StreamerFeeder:
                     log.warning("Goodgame timed out")
                     print("Goodgame timed out")
 
-            
+                await asyncio.sleep(5)
+                
             await asyncio.sleep(60)
 
 
