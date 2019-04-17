@@ -53,14 +53,14 @@ class Torrent:
                     with open(temp_file, 'wb') as f:
                         f.write(req.content)
             
-            try:
-                self.tc.add_torrent(temp_file)
-            except Exception:
-                print("Error while adding torrent")
-                log.warning("Error while adding torrent")
-                return False
+        try:
+            self.tc.add_torrent(temp_file)
+        except Exception as e:
+            print("Error while adding torrent: {}".format(e))
+            log.warning("Error while adding torrent: {}".format(e))
+            return False
 
-            print("Successfully added torrent: {}".format(url))
-            log.info("Successfully added torrent: {}".format(url))
-            os.remove(temp_file)
-            return True
+        print("Successfully added torrent: {}".format(url))
+        log.info("Successfully added torrent: {}".format(url))
+        os.remove(temp_file)
+        return True

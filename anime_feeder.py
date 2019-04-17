@@ -17,7 +17,7 @@ class Feeder:
         :param client: Discord.Client
         """
         self.proxy = Proxy()
-        self.torrent = Torrent(proxy)
+        self.torrent = Torrent(self.proxy)
         self.rss_feed = []
         self.client = client
         self.running = False
