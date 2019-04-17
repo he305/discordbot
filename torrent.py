@@ -48,13 +48,15 @@ class Torrent:
                     return False
                 else: 
                     url_name = parsed_url.path.split('/')[-1]
-                    temp_file = NamedTemporaryFile(prefix=url_name, delete=False)
 
-                    with open(temp_file, 'wb') as f:
-                        f.write(req.content)
+                    with open('tmp/' + url_name, 'wb') as temp_file:
+                        temp_file.write(req.content)
+                    
+                    print(temp_file.name)
+                    print('home/pi/git/discordbot/' + temp_file.name)
             
         try:
-            self.tc.add_torrent(temp_file)
+            self.tc.add_torrent('home/pi/git/discordbot/' + temp_file.name)
         except Exception as e:
             print("Error while adding torrent: {}".format(e))
             log.warning("Error while adding torrent: {}".format(e))
