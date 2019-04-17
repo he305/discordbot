@@ -5,6 +5,7 @@ import asyncio
 import requests
 import re
 from proxy import Proxy
+from torrent import Torrent
 
 import logging
 log = logging.getLogger(__name__)
@@ -16,6 +17,7 @@ class Feeder:
         :param client: Discord.Client
         """
         self.proxy = Proxy()
+        self.torrent = Torrent(proxy)
         self.rss_feed = []
         self.client = client
         self.running = False
@@ -158,6 +160,8 @@ class Feeder:
                 if [s for s in anime_data if title in s] and entry.title not in self.rss_feed:
                     data = "{}\nNew series: {}\n[Link]({})".format('@everyone', entry.title, entry.link)
                     await self.client.send_message(self.channel, data)
+                    if await self.torrent.add_torrent(entry.link):
+                        await self.client.send_message(self.channel, "Successfully added torrent: {}".format(entry.link))
                     #send_message(data)
                     self.rss_feed.append(entry.title)
             log.info("Rss has been read")

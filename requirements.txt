@@ -8,3 +8,4 @@ PyNaCl==1.2.1
 python-dateutil==2.7.3
 beautifulsoup4==4.7.1
 bs4==0.0.1
+transmissionrpc==0.11
