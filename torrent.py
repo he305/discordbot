@@ -51,9 +51,6 @@ class Torrent:
 
                     with open('tmp/' + url_name, 'wb') as temp_file:
                         temp_file.write(req.content)
-                    
-                    print(temp_file.name)
-                    print('home/pi/git/discordbot/' + temp_file.name)
             
         try:
             self.tc.add_torrent('home/pi/git/discordbot/' + temp_file.name)
@@ -64,5 +61,5 @@ class Torrent:
 
         print("Successfully added torrent: {}".format(url))
         log.info("Successfully added torrent: {}".format(url))
-        os.remove(temp_file)
+        #os.remove('home/pi/git/discordbot/' + temp_file.name)
         return True
