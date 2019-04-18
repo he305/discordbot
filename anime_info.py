@@ -1,5 +1,5 @@
 from dateutil.parser import parse
-import requests
+import aiohttp
 from bs4 import BeautifulSoup
 
 headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'}
@@ -13,6 +13,9 @@ days = [
     'субботу',
     'воскресенье'
 ]
+
+import logging
+log = logging.getLogger(__name__)
 
 class Info:
     def __init__(self, anime):
@@ -68,19 +71,28 @@ class Info:
             return self.name == other.name and self.watching_status == other.watching_status
         return False
 
-    def get_synonyms(self):
-        try:
-            data = requests.get("https://myanimelist.net/anime/{}".format(self.id), timeout=10).text
-            soup = BeautifulSoup(data, 'html.parser')
+    async def get_synonyms(self):
+        async with aiohttp.ClientSession() as session:
+            i = 0
+            while not self.synonyms:
+                try:
+                    async with session.get("https://myanimelist.net/anime/{}".format(self.id), timeout=5) as resp:
+                        soup = BeautifulSoup(await resp.text(), 'html.parser')
 
-            td = soup.find("td", class_="borderClass")
-            divs = td.find_all("div", class_="spaceit_pad")
+                        td = soup.find("td", class_="borderClass")
+                        divs = td.find_all("div", class_="spaceit_pad")
 
-            if divs:
-                for div in divs:
-                    self.synonyms.append(div.contents[2].strip())
-        except (requests.exceptions.ConnectionError, requests.exceptions.Timeout):
-            print("Mal anime parsing timed out")
+                        if divs:
+                            for div in divs:
+                                self.synonyms.append(div.contents[2].strip())
+                        print("Synonyms for {} loaded".format(self.name))
+                        log.info("Synonyms for {} loaded".format(self.name))
+                except Exception as e:
+                    print("Error getting anime synonyms: {}".format(repr(e)))
+                    log.warning("Error getting anime synonyms: {}".format(repr(e)))
+                    if i > 5:
+                        break
+                    i += 1
 
 class InfoRaw:
     def __init__(self, anime):

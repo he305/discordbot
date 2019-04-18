@@ -1,7 +1,14 @@
 from hidden_data import TOKEN
 
 import logging
-logging.basicConfig(filename='logging.log', level=logging.INFO, format='%(asctime)s %(message)s', datefmt='%d/%m/%Y %H:%M:%S')
+logging.basicConfig(filename='logging.log', level=logging.INFO, format='%(asctime)s:%(levelname)s:%(name)s: %(message)s', datefmt='%d/%m/%Y %H:%M:%S')
+
+import discord
+logger = logging.getLogger('discord')
+logger.setLevel(logging.DEBUG)
+handler = logging.FileHandler(filename='discord.log', encoding='utf-8', mode='w')
+handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
+logger.addHandler(handler)
 
 from discord.ext.commands import Bot
 from anime_list import get_data
@@ -18,15 +25,15 @@ from streamer_feeder import StreamerFeeder
 
 BOT_PREFIX = ('?', '!')
 
-
 client = Bot(command_prefix=BOT_PREFIX)
-#client.add_cog(Music(client))
-client.add_cog(BlockInfo(client))
-anime_feeder = Feeder(client)
-client.loop.create_task(anime_feeder.feed('he3050'))
 
 streamer_feeder = StreamerFeeder(client)
 client.loop.create_task(streamer_feeder.feed())
+
+#client.add_cog(Music(client))
+#client.add_cog(BlockInfo(client))
+anime_feeder = Feeder(client)
+client.loop.create_task(anime_feeder.feed('he3050'))
 
 async def todo():
     tz = pytz.timezone("Europe/Moscow")
@@ -51,7 +58,7 @@ async def get_anime(ctx, nickname='he3050'):
     :return:
     """
     await client.say("Starting collecting data for {}".format(ctx.message.author.mention))
-    animes = get_data(nickname)
+    animes = await get_data(nickname)
     for anime in animes:
         if anime.watching_status == 1:
             await client.say(anime.form_full_info() + '\n')

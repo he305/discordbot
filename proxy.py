@@ -19,7 +19,8 @@ class Proxy:
       
         self.proxyDict = []
         for i in range(len(proxiesRaw)):
-            dic = {"http":proxiesRaw[i], "https":proxiesRaw[i]}
+            dic = 'http://' + proxiesRaw[i]
+            #dic = {"http":proxiesRaw[i], "https":proxiesRaw[i]}
             self.proxyDict.append(dic)
         self.current = random.choice(self.proxyDict)
         log.info("Proxies loaded. Size: {}".format(len(proxiesRaw)))
