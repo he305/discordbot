@@ -10,22 +10,22 @@ from torrent import Torrent
 import logging
 log = logging.getLogger(__name__)
 
+
 class Feeder:
     def __init__(self, client):
         """
-
         :param client: Discord.Client
         """
         self.proxy = Proxy()
-        self.torrent = Torrent(self.proxy)
+        self.torrent = Torrent()
         self.rss_feed = []
         self.client = client
         self.running = False
         self.anime_data_cached = []
         self.channel = ""
 
-        #Have to use it because sometimes mal/shikimori titles completely mismatch from nyaa.si titles
-        #Current regex algorithm cannot solve this problem
+        # Have to use it because sometimes mal/shikimori titles completely mismatch from nyaa.si titles
+        # Current regex algorithm cannot solve this problem
         self.special_cases = []
 
     async def feed(self, nickname):
@@ -37,7 +37,7 @@ class Feeder:
         :return:
         """
         await self.client.wait_until_ready()
-        for server in self.client.servers:
+        for server in self.client.guilds:
             for channel in server.channels:
                 if channel.name == "anime-feed":
                     self.channel = channel
@@ -54,6 +54,7 @@ class Feeder:
                 await anime.get_synonyms()
                 await asyncio.sleep(3)
 
+        await self.proxy.get_new()
         self.running = True
         self.client.loop.create_task(self.feed_loop(nickname))
         # self.client.loop.create_task(self.clear_feed())
@@ -140,7 +141,7 @@ class Feeder:
                             rss = []
                     except Exception as e:
                         if i > 5:
-                            self.proxy.get_new()
+                            await self.proxy.get_new()
                             i = 0
                         print("Failed to load Nyaa.si: {}".format(repr(e)))
                         log.warning("Failed to load Nyaa.si: {}".format(repr(e)))

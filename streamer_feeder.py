@@ -47,7 +47,7 @@ class StreamerFeeder:
             log.info(streamer)
             print(streamer)
 
-        for server in self.client.servers:
+        for server in self.client.guilds:
             for channel in server.channels:
                 if channel.name == "streamer-feed":
                     self.channel = channel
@@ -55,12 +55,12 @@ class StreamerFeeder:
 
         self.running = True
         self.client.loop.create_task(self.feed_loop())
-        #self.client.loop.create_task(self.group_feed_loop())
+        self.client.loop.create_task(self.group_feed_loop())
 
     async def group_feed_loop(self):
         while self.running:
             for group in self.groups:
-                res = get_new_posts(int(group))
+                res = await get_new_posts(int(group))
 
 
                 if len(self.group_posts) > 1:
@@ -111,7 +111,6 @@ class StreamerFeeder:
                 await asyncio.sleep(300)
 
     async def feed_loop(self):
-        print("WE ARE HERE")
         async with aiohttp.ClientSession() as session:
             while self.running:
                 for streamer in self.streamers:
@@ -139,7 +138,7 @@ class StreamerFeeder:
                 for goodgame_stream in self.goodgame:
                     try:
                         async with session.get(
-                            "https://goodgame.ru/api/getggchannelstatus?id=" + goodgame_stream + "&fmt=json", 
+                            "http://goodgame.ru/api/getggchannelstatus?id=" + goodgame_stream + "&fmt=json", 
                             timeout=10) as resp:
 
                             data = await resp.json()

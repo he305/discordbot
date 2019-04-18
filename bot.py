@@ -4,16 +4,10 @@ import logging
 logging.basicConfig(filename='logging.log', level=logging.INFO, format='%(asctime)s:%(levelname)s:%(name)s: %(message)s', datefmt='%d/%m/%Y %H:%M:%S')
 
 import discord
-logger = logging.getLogger('discord')
-logger.setLevel(logging.DEBUG)
-handler = logging.FileHandler(filename='discord.log', encoding='utf-8', mode='w')
-handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
-logger.addHandler(handler)
 
 from discord.ext.commands import Bot
 from anime_list import get_data
 from forecast import weather
-#from music import Music
 from anime_feeder import Feeder
 from rkn import BlockInfo
 import asyncio
@@ -30,7 +24,6 @@ client = Bot(command_prefix=BOT_PREFIX)
 streamer_feeder = StreamerFeeder(client)
 client.loop.create_task(streamer_feeder.feed())
 
-#client.add_cog(Music(client))
 #client.add_cog(BlockInfo(client))
 anime_feeder = Feeder(client)
 client.loop.create_task(anime_feeder.feed('he3050'))
@@ -48,8 +41,7 @@ async def todo():
 
 
 @client.command(name="anime",
-                description="Get anime list for specific user",
-                pass_context=True)
+                description="Get anime list for specific user")
 async def get_anime(ctx, nickname='he3050'):
     """
     Get anime list from mal by nickname
@@ -57,23 +49,23 @@ async def get_anime(ctx, nickname='he3050'):
     :param nickname: nickname at myanimelist
     :return:
     """
-    await client.say("Starting collecting data for {}".format(ctx.message.author.mention))
+    await ctx.channel.send("Starting collecting data for {}".format(ctx.message.author.mention))
     animes = await get_data(nickname)
     for anime in animes:
         if anime.watching_status == 1:
-            await client.say(anime.form_full_info() + '\n')
+            await ctx.channel.send(anime.form_full_info() + '\n')
     
-    await client.say("Complete {}".format(ctx.message.author.mention))
+    await ctx.channel.send("Complete {}".format(ctx.message.author.mention))
 
 
 @client.command(name="weather")
-async def get_weather():
+async def get_weather(ctx):
     """
     Get current weather in Elektrostal, RU
     :return:
     """
     data = weather()
-    await client.say(data)
+    await ctx.channel.send(data)
 
 
 @client.event
@@ -93,15 +85,14 @@ async def on_ready():
     #             break
 
 
-@client.command(name="сидим",
-                pass_context=True)
+@client.command(name="сидим")
 async def sit(ctx):
     """
     Send picture for describing main philosophy of life
     :param ctx: Discord.Context
     :return:
     """
-    await client.send_file(ctx.message.channel, 'pics/sidim.jpg')
+    await ctx.channel.send(file=discord.File('pics/sidim.jpg'))
 
 
 @client.command(pass_context=True)
@@ -111,14 +102,14 @@ async def clear(ctx):
     :param ctx: Discord.Context
     :return:
     """
-    if not ctx.message.author.server_permissions.administrator:
-        await client.say("Admin permission required for this command")
+    if not ctx.message.author.guild_permissions.administrator:
+        await ctx.send("Admin permission required for this command")
         return
     msg = []
     print(ctx.message.channel)
-    async for x in client.logs_from(ctx.message.channel):
+    async for x in ctx.channel.history():
         msg.append(x)
-    await client.delete_messages(msg)
+    await ctx.channel.delete_messages(msg)
 
 
 client.run(TOKEN)

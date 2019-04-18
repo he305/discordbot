@@ -1,6 +1,7 @@
 pytz==2017.2
 youtube_dl==2018.4.3
 discord.py==0.16.12
+discord.py==1.0.1
 feedparser==5.2.1
 requests==2.18.4
 discord==0.0.2
