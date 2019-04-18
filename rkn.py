@@ -13,7 +13,7 @@ class BlockInfo:
 
     @commands.command(name="rkn")
     async def rkn(self, ctx, minimum):
-        await ctx.message.channel.send( "Начат сбор данных с https://usher2.club/")
+        await ctx.message.channel.send("Начат сбор данных с https://usher2.club/")
         self.client.loop.create_task(self.run(ctx.message.channel, int(minimum)))
 
     async def run(self, channel, minimum):

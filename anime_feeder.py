@@ -46,7 +46,7 @@ class Feeder:
         self.anime_data_cached = await get_data(nickname)
         while not self.anime_data_cached:
             await asyncio.sleep(30)
-            await self.client.send_message(self.channel, "Anime list is down, trying to reconnect...")
+            await self.channel.send("Anime list is down, trying to reconnect...")
             self.anime_data_cached = await get_data(nickname)
         
         for anime in self.anime_data_cached:
@@ -67,12 +67,12 @@ class Feeder:
         :return:
         """
         if not ctx.message.author.server_permissions.administrator:
-            await self.client.send_message(ctx.message.channel, "Admin permission required for this command")
+            await self.channel.send("Admin permission required for this command")
             return
         if self.running:
             self.running = False
             self.rss_feed.clear()
-            await self.client.send_message(ctx.message.channel, "Feeding rss stopped")
+            await self.channel.send("Feeding rss stopped")
 
     async def feed_loop(self, nickname):
         """
@@ -105,18 +105,18 @@ class Feeder:
 
                 if new_data:
                     
-                    await self.client.send_message(self.channel, "New animes are found:")
+                    await self.channel.send("New animes are found:")
                     for item in new_data:
                         if item.watching_status == 1:
-                            await self.client.send_message(self.channel, "New watching: {}".format(item.name))
+                            await self.channel.send("New watching: {}".format(item.name))
                         if item.watching_status == 2:
-                            await self.client.send_message(self.channel, "New completed: {} Score: {}".format(item.name, item.score))
+                            await self.channel.send("New completed: {} Score: {}".format(item.name, item.score))
                         if item.watching_status == 3:
-                            await self.client.send_message(self.channel, "New onhold: {}".format(item.name))
+                            await self.channel.send("New onhold: {}".format(item.name))
                         if item.watching_status == 4:
-                            await self.client.send_message(self.channel, "New dropped: {} Score: {}".format(item.name, item.score))
+                            await self.channel.send("New dropped: {} Score: {}".format(item.name, item.score))
                         if item.watching_status == 6:
-                            await self.client.send_message(self.channel, "New planned to watch: {}".format(item.name))
+                            await self.channel.send("New planned to watch: {}".format(item.name))
 
                     self.anime_data_cached = anime_data_full
                     for anime in self.anime_data_cached:
@@ -162,9 +162,9 @@ class Feeder:
                     title = self.fix_rss_title(title)
                     if [s for s in anime_data if title in s] and entry.title not in self.rss_feed:
                         data = "{}\nNew series: {}\n[Link]({})".format('@everyone', entry.title, entry.link)
-                        await self.client.send_message(self.channel, data)
+                        await self.channel.send(data)
                         if await self.torrent.add_torrent(entry.link):
-                            await self.client.send_message(self.channel, "Successfully added torrent: {}".format(entry.link))
+                            await self.channel.send("Successfully added torrent: {}".format(entry.link))
                         
                         self.rss_feed.append(entry.title)
                 log.info("Rss has been read")

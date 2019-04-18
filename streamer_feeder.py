@@ -82,7 +82,7 @@ class StreamerFeeder:
                 offset = current_time - int(res['date'])
                 if data not in self.group_posts and offset < 600 * len(self.groups):
                     self.group_posts.append(data)
-                    await self.channel.send(self.channel, data)
+                    await self.channel.send(data)
                 
                 # comments = get_post_comments(group, res['id'])
 
@@ -104,7 +104,7 @@ class StreamerFeeder:
 
                 #         if data not in self.comments:
                 #             self.comments.append(data)
-                #             await self.channel.send(self.channel, data)
+                #             await self.channel.send(data)
 
 
 
@@ -126,7 +126,7 @@ class StreamerFeeder:
                                 self.streamer_live.remove(streamer)
 
                             if stream_data['data'] and streamer not in self.streamer_live:
-                                await self.channel.send(self.channel, "@everyone\n{0} is online".format(streamer))
+                                await self.channel.send("@everyone\n{0} is online".format(streamer))
                                 self.streamer_live.append(streamer)
 
                     except Exception as e:
@@ -145,7 +145,7 @@ class StreamerFeeder:
 
                             if data[goodgame_stream]["status"] == "Live" and goodgame_stream not in self.goodgames_live:
                                 self.goodgames_live.append(goodgame_stream)
-                                await self.channel.send(self.channel, "@everyone\n{0} is online".format(self.goodgame[goodgame_stream]))
+                                await self.channel.send("@everyone\n{0} is online".format(self.goodgame[goodgame_stream]))
 
                             if data[goodgame_stream]["status"] == "Dead" and goodgame_stream in self.goodgames_live:
                                 self.goodgames_live.remove(goodgame_stream)
