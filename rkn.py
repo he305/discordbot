@@ -11,9 +11,9 @@ class BlockInfo:
         self.url = "https://usher2.club/d1_ipblock.json"
         self.last_ip = 0
 
-    @commands.command(name="rkn", pass_context=True)
+    @commands.command(name="rkn")
     async def rkn(self, ctx, minimum):
-        await self.client.send_message(ctx.message.channel, "Начат сбор данных с https://usher2.club/")
+        await ctx.message.channel.send( "Начат сбор данных с https://usher2.club/")
         self.client.loop.create_task(self.run(ctx.message.channel, int(minimum)))
 
     async def run(self, channel, minimum):
@@ -36,7 +36,7 @@ class BlockInfo:
                         message += "-{} айпи".format(sub)
                     else:
                         message += "+{} айпи".format(sub)
-                    await self.client.send_message(channel, message)
+                    await channel.send(message)
 
                     self.last_ip = data[-1]['y']
 
