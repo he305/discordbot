@@ -153,7 +153,7 @@ class Feeder:
                 pattern = '[HorribleSubs] '
                 while i <= 5:
                     try:
-                        async with session.get("http://horriblesubs.info/rss.php?res=1080.xml") as resp:
+                        async with session.get("http://horriblesubs.info/rss.php?res=1080.xml", proxy=self.proxy.current) as resp:
                             if resp.status == 502:
                                 pattern = '[Erai-raws] '  # if HorribleSubs is offline
                     except Exception as e:
@@ -164,6 +164,7 @@ class Feeder:
                             print("Serious connection errors with HorribleSubs, changing pattern to Erai-raws")
                             log.warning("Serious connection errors with HorribleSubs, changing pattern to Erai-raws")
                             pattern = '[Erai-raws] '
+                        await asyncio.sleep(5)
 
                 for entry in rss.entries:
                     if pattern not in entry.title or '1080p' not in entry.title:
