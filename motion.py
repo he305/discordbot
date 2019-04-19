@@ -1,6 +1,7 @@
 import asyncio
 import glob
 import discord
+import datetime
 
 import logging
 log = logging.getLogger(__name__)
@@ -21,6 +22,15 @@ class Motion:
                 if channel.name == "motion":
                     self.channel = channel
                     break
+        
+        files = [f for f in glob.glob(self.motion_dir + "*.jpg")]
+        files.sort()
+
+        for f in files:
+            name = f.split('/')[-1].replace('.jpg', '')
+            date = datetime.datetime.strptime(name, '%m:%d_%H:%M:%S').replace(year=datetime.datetime.today().year)
+            if (datetime.datetime.today() - date).seconds > 120:
+                self.cached_images.append(f)
             
         self.running = True
         self.client.loop.create_task(self.get_images())
@@ -29,6 +39,7 @@ class Motion:
         while self.running:
             files = [f for f in glob.glob(self.motion_dir + "*.jpg")]
 
+            files.sort()
             for f in files:
                 if f not in self.cached_images:
                     await self.channel.send(file=discord.File(f))
