@@ -154,7 +154,6 @@ class Feeder:
                 headers = {'accept' : 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3'}
                 while i <= 5:
                     try:
-                        print("we are here")
                         async with session.get("https://horriblesubs.info", timeout=10, headers=headers) as resp:
                             if resp.status == 502:
                                 pattern = '[Erai-raws] '  # if HorribleSubs is offline
