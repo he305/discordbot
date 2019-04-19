@@ -15,7 +15,7 @@ class Proxy:
     async def get_new(self):
         async with aiohttp.ClientSession() as session:
             try:
-                async with session.get("https://api.proxyscrape.com/?request=displayproxies&proxytype=http&timeout=3000&anonymity=all&ssl=yes") as resp:
+                async with session.get("https://api.proxyscrape.com/?request=displayproxies&proxytype=http&timeout=2000&anonymity=all&ssl=yes") as resp:
                     data = await resp.text()
                     proxiesRaw = data.split('\r\n')
                     del proxiesRaw[-1] # last is always empty
