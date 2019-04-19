@@ -16,6 +16,7 @@ import pytz
 from vk_api import send_message
 
 from streamer_feeder import StreamerFeeder
+from motion import Motion
 
 BOT_PREFIX = ('?', '!')
 
@@ -27,6 +28,9 @@ client.loop.create_task(streamer_feeder.feed())
 #client.add_cog(BlockInfo(client))
 anime_feeder = Feeder(client)
 client.loop.create_task(anime_feeder.feed('he3050'))
+
+motion_feeder = Motion(client)
+client.loop.create_task(motion_feeder.feed())
 
 async def todo():
     tz = pytz.timezone("Europe/Moscow")
