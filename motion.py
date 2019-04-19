@@ -33,6 +33,8 @@ class Motion:
                 self.cached_images.append(f)
             
         self.running = True
+        print("Motion started to work")
+        log.info("Motion started to work")
         self.client.loop.create_task(self.get_images())
 
     async def get_images(self):
@@ -45,4 +47,4 @@ class Motion:
                     await self.channel.send(file=discord.File(f))
                     self.cached_images.append(f)
 
-            await asyncio.sleep(120)
+            await asyncio.sleep(30)
