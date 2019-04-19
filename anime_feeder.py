@@ -151,9 +151,10 @@ class Feeder:
 
                 i = 0
                 pattern = '[HorribleSubs] '
+                headers = {'accept' : 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3'}
                 while i <= 5:
                     try:
-                        async with session.get("http://horriblesubs.info/rss.php?res=1080.xml", proxy=self.proxy.current) as resp:
+                        async with session.get("https://horriblesubs.info/rss.php?res=1080.xml", headers=headers) as resp:
                             if resp.status == 502:
                                 pattern = '[Erai-raws] '  # if HorribleSubs is offline
                     except Exception as e:
