@@ -90,3 +90,51 @@ discord.errors.LoginFailure: Improper token has been passed.
 19/04/2019 19:18:45:INFO:streamer_feeder: Twitch and goodgame have been read
 19/04/2019 19:18:55:WARNING:anime_feeder: Failed to load Nyaa.si: TimeoutError()
 19/04/2019 19:19:06:WARNING:anime_feeder: Failed to load Nyaa.si: TimeoutError()
+19/11/2019 19:11:13:WARNING:torrent: Can't connect to transmission, torrent task won't work
+19/11/2019 19:11:13:INFO:discord.client: logging in using static token
+19/11/2019 19:11:13:INFO:discord.gateway: Created websocket connected to wss://gateway.discord.gg?encoding=json&v=6&compress=zlib-stream
+19/11/2019 19:11:13:INFO:discord.gateway: Shard ID None has sent the IDENTIFY payload.
+19/11/2019 19:11:14:INFO:discord.gateway: Shard ID None has connected to Gateway: ["gateway-prd-main-7px3",{"micros":38411,"calls":["discord-sessions-prd-1-33",{"micros":36939,"calls":["start_session",{"micros":32381,"calls":["api-prd-main-2hjb",{"micros":27865,"calls":["get_user",{"micros":2450},"add_authorized_ip",{"micros":1284},"get_guilds",{"micros":2301},"coros_wait",{"micros":3}]}]},"guilds_connect",{"micros":2,"calls":[]},"presence_connect",{"micros":3812,"calls":[]}]}]}] (Session ID: b9a21e33828736250f8678805b2c40a9).
+19/11/2019 19:11:16:INFO:streamer_feeder: lasqa
+19/11/2019 19:11:16:INFO:streamer_feeder: honeymad
+19/11/2019 19:11:16:INFO:streamer_feeder: melharucos
+19/11/2019 19:11:16:INFO:streamer_feeder: karmikkoala
+19/11/2019 19:11:16:INFO:motion: Motion started to work
+19/11/2019 19:11:16:WARNING:vk_api: Error while getting new posts from vk group: KeyError('response',)
+19/11/2019 19:11:16:ERROR:asyncio: Task exception was never retrieved
+future: <Task finished coro=<StreamerFeeder.group_feed_loop() done, defined at C:\Git\discordbot\streamer_feeder.py:60> exception=TypeError("argument of type 'NoneType' is not iterable",)>
+Traceback (most recent call last):
+  File "C:\Git\discordbot\streamer_feeder.py", line 71, in group_feed_loop
+    if 'attachments' in res:
+TypeError: argument of type 'NoneType' is not iterable
+19/11/2019 19:11:18:INFO:anime_info: Synonyms for Azur Lane loaded
+19/11/2019 19:11:23:INFO:anime_info: Synonyms for Machikado Mazoku loaded
+19/11/2019 19:11:27:INFO:anime_info: Synonyms for Haibane Renmei loaded
+19/11/2019 19:11:31:INFO:anime_info: Synonyms for Violet Evergarden Gaiden: Eien to Jidou Shuki Ningyou loaded
+19/11/2019 19:11:35:INFO:proxy: Proxies loaded. Size: 308
+19/11/2019 19:11:38:INFO:anime_feeder: Rss has been read
+19/11/2019 19:11:42:INFO:streamer_feeder: Twitch and goodgame have been read
+19/11/2019 19:14:36:WARNING:torrent: Can't connect to transmission, torrent task won't work
+19/11/2019 19:14:36:INFO:discord.client: logging in using static token
+19/11/2019 19:14:37:INFO:discord.gateway: Created websocket connected to wss://gateway.discord.gg?encoding=json&v=6&compress=zlib-stream
+19/11/2019 19:14:37:INFO:discord.gateway: Shard ID None has sent the IDENTIFY payload.
+19/11/2019 19:14:37:INFO:discord.gateway: Shard ID None has connected to Gateway: ["gateway-prd-main-1h15",{"micros":46966,"calls":["discord-sessions-prd-1-16",{"micros":43313,"calls":["start_session",{"micros":40428,"calls":["api-prd-main-9lmd",{"micros":33934,"calls":["get_user",{"micros":4572},"add_authorized_ip",{"micros":5},"get_guilds",{"micros":5095},"coros_wait",{"micros":2}]}]},"guilds_connect",{"micros":2,"calls":[]},"presence_connect",{"micros":1,"calls":[]}]}]}] (Session ID: b575bb1e8034a8dc2257bfd6ec297cbb).
+19/11/2019 19:14:39:INFO:streamer_feeder: lasqa
+19/11/2019 19:14:39:INFO:streamer_feeder: honeymad
+19/11/2019 19:14:39:INFO:streamer_feeder: melharucos
+19/11/2019 19:14:39:INFO:streamer_feeder: karmikkoala
+19/11/2019 19:14:39:INFO:motion: Motion started to work
+19/11/2019 19:14:39:WARNING:vk_api: Error while getting new posts from vk group: KeyError('response',)
+19/11/2019 19:14:39:ERROR:asyncio: Task exception was never retrieved
+future: <Task finished coro=<StreamerFeeder.group_feed_loop() done, defined at C:\Git\discordbot\streamer_feeder.py:60> exception=TypeError("argument of type 'NoneType' is not iterable",)>
+Traceback (most recent call last):
+  File "C:\Git\discordbot\streamer_feeder.py", line 71, in group_feed_loop
+    if 'attachments' in res:
+TypeError: argument of type 'NoneType' is not iterable
+19/11/2019 19:14:42:INFO:anime_info: Synonyms for Azur Lane loaded
+19/11/2019 19:14:47:INFO:anime_info: Synonyms for Machikado Mazoku loaded
+19/11/2019 19:14:51:INFO:anime_info: Synonyms for Haibane Renmei loaded
+19/11/2019 19:14:55:INFO:anime_info: Synonyms for Violet Evergarden Gaiden: Eien to Jidou Shuki Ningyou loaded
+19/11/2019 19:14:59:INFO:proxy: Proxies loaded. Size: 308
+19/11/2019 19:15:01:INFO:anime_feeder: Rss has been read
+19/11/2019 19:15:06:INFO:streamer_feeder: Twitch and goodgame have been read

@@ -1,0 +1,38 @@
+{
+  "twitch": [
+    {
+      "name" : "lasqa",
+      "id" : "60796327"
+    },
+    {
+      "name": "honeymad",
+      "id": "40298003"
+    },
+    {
+      "name": "forsen",
+      "id": "22484632"
+    },
+    {
+      "name": "segall",
+      "id": "35856714"
+    },
+    {
+      "name": "melharucos",
+      "id": "26819117"
+    },
+    {
+      "name": "karmikkoala",
+      "id": "54742538"
+    },
+    {
+      "name": "c_a_k_e",
+      "id": "43899589"
+    }
+  ],
+  "goodgame": [
+    {
+      "name": "gegeboyz",
+      "id": "99600"
+    }
+  ]
+}

@@ -6,6 +6,7 @@ import aiohttp
 import re
 from proxy import Proxy
 from torrent import Torrent
+from hidden_data import  PROXY_REQUIRED
 
 import logging
 log = logging.getLogger(__name__)
@@ -127,15 +128,16 @@ class Feeder:
                 anime_data = [self.remove_characters(c.get_all_names())
                             for c in self.anime_data_cached if c.watching_status == 1 or c.watching_status == 6]
                     
-                anime_data += self.special_cases #See init
-                #log.info("Anime data: {}".format(anime_data))
+                anime_data += self.special_cases  # See init
+                # log.info("Anime data: {}".format(anime_data))
                 print(anime_data)
 
                 rss = []
                 i = 0
                 while not rss:
                     try:
-                        async with session.get('https://nyaa.si/?page=rss', timeout=5, proxy=self.proxy.current) as resp:
+                        proxy = self.proxy.current if PROXY_REQUIRED else None
+                        async with session.get('https://nyaa.si/?page=rss', timeout=5, proxy=proxy) as resp:
                             rss = feedparser.parse(await resp.text())
                     except IndexError:
                             rss = []
