@@ -18,6 +18,8 @@ from vk_api import send_message
 from streamer_feeder import StreamerFeeder
 from motion import Motion
 
+from search_image import SearchImage
+
 BOT_PREFIX = ('?', '!')
 
 client = Bot(command_prefix=BOT_PREFIX)
@@ -31,6 +33,8 @@ client.loop.create_task(anime_feeder.feed('he3050'))
 
 motion_feeder = Motion(client)
 client.loop.create_task(motion_feeder.feed())
+
+client.add_cog(SearchImage(client))
 
 async def todo():
     tz = pytz.timezone("Europe/Moscow")
