@@ -1,4 +1,3 @@
-twitch
 pytz==2019.1
 youtube-dl==2019.4.17
 discord.py==1.0.1

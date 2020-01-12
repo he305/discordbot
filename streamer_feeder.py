@@ -31,7 +31,7 @@ class StreamerFeeder:
             'Client-ID': CLIENT_ID,
             'Accept': 'application/vnd.twitchtv.v5+json'
         }
-    
+
     def feed(self):
         #await self.client.wait_until_ready()
 
@@ -129,54 +129,81 @@ class StreamerFeeder:
     #             await asyncio.sleep(300)
 
     async def feed_loop(self):
-        async with aiohttp.ClientSession() as session:
-            while self.running:
-                for streamer in self.streamers:
-                    try:
-                        async with session.get(
-                            "https://api.twitch.tv/helix/streams?user_login=" + streamer,
-                            timeout=10,
-                            headers=self.headers) as resp:
+        while self.running:
+            for streamer in self.streamers:
+                status = await streamer.get_status()
 
-                            stream_data = await resp.json()
+                if status and not streamer.status:
+                    streamer.status = True
+                    data = await streamer.init_at_start()
+                    await self.channel.send(data)
+                elif not status and streamer.status:
+                    streamer.status = False
+                    await self.channel.send(f"{streamer.name} went offline")
 
-                            if not stream_data['data'] and streamer in self.streamer_live:
-                                self.streamer_live.remove(streamer)
+                await asyncio.sleep(1)
 
-                            if stream_data['data'] and streamer not in self.streamer_live:
-                                await self.channel.send("@everyone\n{0} is online".format(streamer))
-                                self.streamer_live.append(streamer)
+                if not status:
+                    continue
+                processData = await streamer.process_streamer()
+                if len(processData) > 1:
+                    await self.channel.send(processData)
 
-                    except Exception as e:
-                        print("Failed to load twitch: {}".format(repr(e)))
-                        log.warning("Failed to load twitch: {}".format(repr(e)))
+            print("Twitch and goodgame have been read")
+            log.info("Twitch and goodgame have been read")
+            await asyncio.sleep(60)
 
-                    await asyncio.sleep(5)
+                    
 
-                for goodgame_stream in self.goodgame:
-                    try:
-                        async with session.get(
-                            "http://goodgame.ru/api/getggchannelstatus?id=" + goodgame_stream + "&fmt=json", 
-                            timeout=10) as resp:
 
-                            data = await resp.json()
+        # async with aiohttp.ClientSession() as session:
+        #     while self.running:
+        #         for streamer in self.streamers:
+        #             try:
+        #                 async with session.get(
+        #                     "https://api.twitch.tv/helix/streams?user_login=" + streamer,
+        #                     timeout=10,
+        #                     headers=self.headers) as resp:
 
-                            if data[goodgame_stream]["status"] == "Live" and goodgame_stream not in self.goodgames_live:
-                                self.goodgames_live.append(goodgame_stream)
-                                await self.channel.send("@everyone\n{0} is online".format(self.goodgame[goodgame_stream]))
+        #                     stream_data = await resp.json()
 
-                            if data[goodgame_stream]["status"] == "Dead" and goodgame_stream in self.goodgames_live:
-                                self.goodgames_live.remove(goodgame_stream)
+        #                     if not stream_data['data'] and streamer in self.streamer_live:
+        #                         self.streamer_live.remove(streamer)
 
-                    except Exception as e:
-                        log.warning("Goodgame timed out: {}".format(repr(e)))
-                        print("Goodgame timed out: {}".format(repr(e)))
+        #                     if stream_data['data'] and streamer not in self.streamer_live:
+        #                         await self.channel.send("@everyone\n{0} is online".format(streamer))
+        #                         self.streamer_live.append(streamer)
 
-                    await asyncio.sleep(5)
+        #             except Exception as e:
+        #                 print("Failed to load twitch: {}".format(repr(e)))
+        #                 log.warning("Failed to load twitch: {}".format(repr(e)))
 
-                print("Twitch and goodgame have been read")
-                log.info("Twitch and goodgame have been read")
-                await asyncio.sleep(60)
+        #             await asyncio.sleep(5)
+
+        #         for goodgame_stream in self.goodgame:
+        #             try:
+        #                 async with session.get(
+        #                     "http://goodgame.ru/api/getggchannelstatus?id=" + goodgame_stream + "&fmt=json", 
+        #                     timeout=10) as resp:
+
+        #                     data = await resp.json()
+
+        #                     if data[goodgame_stream]["status"] == "Live" and goodgame_stream not in self.goodgames_live:
+        #                         self.goodgames_live.append(goodgame_stream)
+        #                         await self.channel.send("@everyone\n{0} is online".format(self.goodgame[goodgame_stream]))
+
+        #                     if data[goodgame_stream]["status"] == "Dead" and goodgame_stream in self.goodgames_live:
+        #                         self.goodgames_live.remove(goodgame_stream)
+
+        #             except Exception as e:
+        #                 log.warning("Goodgame timed out: {}".format(repr(e)))
+        #                 print("Goodgame timed out: {}".format(repr(e)))
+
+        #             await asyncio.sleep(5)
+
+        #         print("Twitch and goodgame have been read")
+        #         log.info("Twitch and goodgame have been read")
+        #         await asyncio.sleep(60)
 
 
 if __name__ == "__main__":

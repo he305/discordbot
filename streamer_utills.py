@@ -1,56 +1,79 @@
-from twitch import TwitchClient
-from twitch.constants import STREAM_TYPE_ALL
+import aiohttp
+import asyncio
 
 from hidden_data import CLIENT_ID, OAUTH_TWITCH
 
-client = TwitchClient(client_id=CLIENT_ID, oauth_token=OAUTH_TWITCH)
+headers = {
+    'Client-ID': CLIENT_ID,
+    'Accept': 'application/vnd.twitchtv.v5+json'
+}
 
 
-def get_channel_by_name(streamer_name):
-    channels = client.users.translate_usernames_to_ids(streamer_name)
-    return channels[0].id
+async def get_channel_by_name(streamer_name):
+    async with aiohttp.ClientSession() as session:
+        async with session.get(
+            "https://api.twitch.tv/kraken/users?login=" + streamer_name,
+            timeout=10,
+            headers=headers) as resp:
+
+            stream_data = await resp.json()
+            user_id = stream_data['users'][0]['_id']
+            print(user_id)
+            return user_id
 
 
-def get_channel_by_id(streamer_id):
-    channel = client.channels.get_by_id(streamer_id)
-    return channel
+
+# def get_channel_by_id(streamer_id):
+#     channel = client.channels.get_by_id(streamer_id)
+#     return channel
 
 
-def __get_stream(streamer_id):
-    stream = client.streams.get_stream_by_user(channel_id=streamer_id, stream_type=STREAM_TYPE_ALL)
-    if stream is None:
-        return None
-    return stream
+async def __get_stream(streamer_id):
+    async with aiohttp.ClientSession() as session:
+        async with session.get(
+            "https://api.twitch.tv/kraken/streams/" + streamer_id,
+            timeout=10,
+            headers=headers) as resp:
+
+            stream_data = await resp.json()
+            if stream_data["stream"] is None:
+                return None
+            return stream_data["stream"]
 
 
-def get_streaming_status(streamer_id):
-    stream = __get_stream(streamer_id)
+async def get_streaming_status(streamer_id):
+    stream = await __get_stream(streamer_id)
     if stream is None:
         return False
     return True
 
 
-def get_game(streamer_id):
-    stream = __get_stream(streamer_id)
+async def get_game(streamer_id):
+    stream = await __get_stream(streamer_id)
     if stream is None:
         return ""
     return stream["game"]
 
 
-def get_viewers(streamer_id):
-    stream = __get_stream(streamer_id)
+async def get_viewers(streamer_id):
+    stream = await __get_stream(streamer_id)
     if stream is None:
         return "0"
     return stream["viewers"]
 
 
-def get_title(streamer_id):
-    stream = __get_stream(streamer_id)
+async def get_title(streamer_id):
+    stream = await __get_stream(streamer_id)
+    print(stream["channel"]["status"])
     if stream is None:
         return ""
     return stream["channel"]["status"]
 
 
 if __name__ == "__main__":
-    print(get_title(22484632))
-    print(get_channel_by_name("lasqa"))
+    #print(get_title(22484632))
+    loop = asyncio.get_event_loop()
+    # loop.run_until_complete(get_channel_by_name("forsen"))
+    # loop.run_until_complete(get_channel_by_name("lasqa"))
+    loop.run_until_complete(get_title('22484632'))
+    

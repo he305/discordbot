@@ -1,10 +1,12 @@
 import streamer_utills as twitch_api
 import asyncio
 
+
 class StreamerInfo:
     def __init__(self, name, id):
         self.name = name
         self.id = id
+        self.status = False
 
 
 class StreamerInfoTwitch(StreamerInfo):
@@ -53,8 +55,5 @@ class StreamerInfoTwitch(StreamerInfo):
 
         return sb
 
-    def get_status(self):
+    async def get_status(self):
         return twitch_api.get_streaming_status(self.id)
-
-
-
