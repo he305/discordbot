@@ -1,7 +1,7 @@
 import aiohttp
 import asyncio
 
-from hidden_data import CLIENT_ID, OAUTH_TWITCH
+from hidden_data import CLIENT_ID
 
 headers = {
     'Client-ID': CLIENT_ID,
@@ -13,27 +13,20 @@ async def get_channel_by_name(streamer_name):
     async with aiohttp.ClientSession() as session:
         async with session.get(
             "https://api.twitch.tv/kraken/users?login=" + streamer_name,
-            timeout=10,
-            headers=headers) as resp:
+                timeout=10,
+                headers=headers) as resp:
 
             stream_data = await resp.json()
             user_id = stream_data['users'][0]['_id']
-            print(user_id)
             return user_id
-
-
-
-# def get_channel_by_id(streamer_id):
-#     channel = client.channels.get_by_id(streamer_id)
-#     return channel
 
 
 async def __get_stream(streamer_id):
     async with aiohttp.ClientSession() as session:
         async with session.get(
             "https://api.twitch.tv/kraken/streams/" + streamer_id,
-            timeout=10,
-            headers=headers) as resp:
+                timeout=10,
+                headers=headers) as resp:
 
             stream_data = await resp.json()
             if stream_data["stream"] is None:
@@ -64,14 +57,13 @@ async def get_viewers(streamer_id):
 
 async def get_title(streamer_id):
     stream = await __get_stream(streamer_id)
-    print(stream["channel"]["status"])
     if stream is None:
         return ""
     return stream["channel"]["status"]
 
 
 if __name__ == "__main__":
-    #print(get_title(22484632))
+    # print(get_title(22484632))
     loop = asyncio.get_event_loop()
     # loop.run_until_complete(get_channel_by_name("forsen"))
     # loop.run_until_complete(get_channel_by_name("lasqa"))

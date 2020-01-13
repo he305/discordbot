@@ -20,7 +20,7 @@ class StreamerFeeder:
         #self.streamer_live = []
         #self.goodgame = []
         #self.goodgames_live = []
-        #self.groups = {}
+        self.groups = {}
 
         self.group_posts = []
         self.comments = []
@@ -32,8 +32,8 @@ class StreamerFeeder:
             'Accept': 'application/vnd.twitchtv.v5+json'
         }
 
-    def feed(self):
-        #await self.client.wait_until_ready()
+    async def feed(self):
+        await self.client.wait_until_ready()
 
         with open("streamers.json", 'r', encoding='utf8') as f:
             streamers = json.load(f)
@@ -41,92 +41,77 @@ class StreamerFeeder:
         for streamer in streamers["twitch"]:
             name = streamer["name"]
             if streamer["id"] is None:
-                id = get_channel_by_name(streamer["name"])
+                id = await get_channel_by_name(streamer["name"])
             else:
                 id = streamer["id"]
 
             self.streamers.append(StreamerInfoTwitch(name, id))
 
         for streamer in self.streamers:
-            print(streamer.name + " " + str(streamer.get_status()))
+            log.info(streamer)
 
+        with open('groups.json', 'r', encoding="utf8") as f:
+            self.groups = json.load(f)
 
+        for server in self.client.guilds:
+            for channel in server.channels:
+                if channel.name == "streamer-feed":
+                    self.channel = channel
+                    break
 
-        # with open('streamers.json', 'r', encoding="utf8") as f:
-        #     self.streamers = [s.strip() for s in f.readlines()]
-        #
-        # with open('groups.json', 'r', encoding="utf8") as f:
-        #     self.groups = json.load(f)
-        #
-        # with open('goodgame.json', 'r', encoding="utf8") as f:
-        #     self.goodgame = json.load(f)
-        #
-        # for streamer in self.streamers:
-        #     log.info(streamer)
-        #     print(streamer)
-        #
-        # for server in self.client.guilds:
-        #     for channel in server.channels:
-        #         if channel.name == "streamer-feed":
-        #             self.channel = channel
-        #             break
-        #
-        # self.running = True
-        # self.client.loop.create_task(self.feed_loop())
-        # self.client.loop.create_task(self.group_feed_loop())
+        self.running = True
+        self.client.loop.create_task(self.feed_loop())
+        self.client.loop.create_task(self.group_feed_loop())
 
-    # async def group_feed_loop(self):
-    #     while self.running:
-    #         for group in self.groups:
-    #             res = await get_new_posts(int(group))
-    #
-    #
-    #             if len(self.group_posts) > 1:
-    #                 print(self.group_posts[0])
-    #                 print(self.group_posts[1])
-    #
-    #             url = ""
-    #             if 'attachments' in res:
-    #                 for att in res['attachments']:
-    #                     if att['type'] == 'photo':
-    #                         url = att['photo']['text'].replace('Original: ', '')
-    #             text = ""
-    #             if 'text' in res:
-    #                 text = res['text']
-    #             data = "@everyone\n{}{}{}".format(self.groups[group], '\n' + text, '\n' + url)
-    #
-    #             current_time = time.time()
-    #
-    #             offset = current_time - int(res['date'])
-    #             if data not in self.group_posts and offset < 600 * len(self.groups):
-    #                 self.group_posts.append(data)
-    #                 await self.channel.send(data)
-    #
-    #             # comments = get_post_comments(group, res['id'])
-    #
-    #             # for comment in comments:
-    #             #     if int(comment['likes']['count']) > MIN_LIKES:
-    #             #         url = ""
-    #             #         if 'attachments' in comment:
-    #             #             for att in comment['attachments']:
-    #             #                 if att['type'] == 'photo':
-    #             #                     for size in att['photo']['sizes']:
-    #             #                         if size['type'] == "x":
-    #             #                             url = size['url']
-    #             #                             break
-    #             #         text = ""
-    #             #         if 'text' in comment:
-    #             #             text = comment['text']
-    #
-    #             #         data = "\n{}{}\nURL: {}".format(text, '\n' + url, "https://vk.com/{}?w=wall-{}_{}_r{}".format(self.groups[group], group, res['id'], comment['id']))
-    #
-    #             #         if data not in self.comments:
-    #             #             self.comments.append(data)
-    #             #             await self.channel.send(data)
-    #
-    #
-    #
-    #             await asyncio.sleep(300)
+    async def group_feed_loop(self):
+        while self.running:
+            for group in self.groups:
+                res = await get_new_posts(int(group))
+
+                if len(self.group_posts) > 1:
+                    print(self.group_posts[0])
+                    print(self.group_posts[1])
+
+                url = ""
+                if 'attachments' in res:
+                    for att in res['attachments']:
+                        if att['type'] == 'photo':
+                            url = att['photo']['text'].replace('Original: ', '')
+                text = ""
+                if 'text' in res:
+                    text = res['text']
+                data = "@everyone\n{}{}{}".format(self.groups[group], '\n' + text, '\n' + url)
+
+                current_time = time.time()
+
+                offset = current_time - int(res['date'])
+                if data not in self.group_posts and offset < 600 * len(self.groups):
+                    self.group_posts.append(data)
+                    await self.channel.send(data)
+    
+                # comments = get_post_comments(group, res['id'])
+    
+                # for comment in comments:
+                #     if int(comment['likes']['count']) > MIN_LIKES:
+                #         url = ""
+                #         if 'attachments' in comment:
+                #             for att in comment['attachments']:
+                #                 if att['type'] == 'photo':
+                #                     for size in att['photo']['sizes']:
+                #                         if size['type'] == "x":
+                #                             url = size['url']
+                #                             break
+                #         text = ""
+                #         if 'text' in comment:
+                #             text = comment['text']
+    
+                #         data = "\n{}{}\nURL: {}".format(text, '\n' + url, "https://vk.com/{}?w=wall-{}_{}_r{}".format(self.groups[group], group, res['id'], comment['id']))
+    
+                #         if data not in self.comments:
+                #             self.comments.append(data)
+                #             await self.channel.send(data)
+    
+                await asyncio.sleep(300)
 
     async def feed_loop(self):
         while self.running:
@@ -152,9 +137,6 @@ class StreamerFeeder:
             print("Twitch and goodgame have been read")
             log.info("Twitch and goodgame have been read")
             await asyncio.sleep(60)
-
-                    
-
 
         # async with aiohttp.ClientSession() as session:
         #     while self.running:
@@ -208,5 +190,7 @@ class StreamerFeeder:
 
 if __name__ == "__main__":
     s = StreamerFeeder(None)
-
-    s.feed()
+    loop = asyncio.get_event_loop()
+    # loop.run_until_complete(get_channel_by_name("forsen"))
+    # loop.run_until_complete(get_channel_by_name("lasqa"))
+    loop.run_until_complete(s.feed())

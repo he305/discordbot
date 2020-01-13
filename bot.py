@@ -27,26 +27,14 @@ client = Bot(command_prefix=BOT_PREFIX)
 streamer_feeder = StreamerFeeder(client)
 client.loop.create_task(streamer_feeder.feed())
 
-#client.add_cog(BlockInfo(client))
+# client.add_cog(BlockInfo(client))
 anime_feeder = Feeder(client)
 client.loop.create_task(anime_feeder.feed('he3050'))
 
-motion_feeder = Motion(client)
-client.loop.create_task(motion_feeder.feed())
+# motion_feeder = Motion(client)
+# client.loop.create_task(motion_feeder.feed())
 
 client.add_cog(SearchImage(client))
-
-async def todo():
-    tz = pytz.timezone("Europe/Moscow")
-    todolist = "1. Еда\n2. Зонт\n3. Флешка"
-    while True:
-        current_time = datetime.now(tz)
-        if (current_time.hour == 7 and current_time.minute <= 15 and current_time.weekday() <= 4):
-            send_message(todolist)
-        await asyncio.sleep(900)
-
-#client.loop.create_task(todo())
-
 
 @client.command(name="anime",
                 description="Get anime list for specific user")
