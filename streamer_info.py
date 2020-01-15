@@ -34,17 +34,17 @@ class StreamerInfoTwitch(StreamerInfo):
         sb = ""
 
         cur_title = await twitch_api.get_title(self.id)
-        if cur_title != self.title:
+        if cur_title.lower() != self.title.lower():
             self.title = cur_title
             sb += f"{self.name} changed title to {cur_title}"
-        
+
         await asyncio.sleep(1)
 
         cur_game = await twitch_api.get_game(self.id)
-        if cur_game != self.game:
+        if cur_game.lower() != self.game.lower():
             self.game = cur_game
             sb += f"{self.name} changed game to {cur_game}"
-        
+
         await asyncio.sleep(1)
 
         if len(sb) <= 1:
@@ -53,7 +53,7 @@ class StreamerInfoTwitch(StreamerInfo):
         sb = "@everyone\n" + sb[0:]
 
         viewers = await twitch_api.get_viewers(self.id)
-        sb += f"Viewers: {viewers}\n"
+        sb += f"\nViewers: {viewers}\n"
 
         return sb
 
