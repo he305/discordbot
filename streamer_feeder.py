@@ -1,13 +1,11 @@
 import asyncio
 import json
-import aiohttp
 import logging
 
 from vk_api import get_new_posts
-from streamer_utills import get_channel_by_name
-from streamer_info import StreamerInfoTwitch
+from streamer_utills import TwitchUtills
+from streamer_info import StreamerInfoTwitch, StreamerInfoWasd, StreamerInfoGoodgame
 
-from hidden_data import CLIENT_ID
 MIN_LIKES = 10
 
 log = logging.getLogger(__name__)
@@ -17,20 +15,12 @@ class StreamerFeeder:
     def __init__(self, client):
         self.client = client
         self.streamers = []
-        #self.streamer_live = []
-        #self.goodgame = []
-        #self.goodgames_live = []
         self.groups = {}
 
         self.group_posts = []
         self.comments = []
         self.running = False
         self.channel = None
-
-        self.headers = {
-            'Client-ID': CLIENT_ID,
-            'Accept': 'application/vnd.twitchtv.v5+json'
-        }
 
     async def feed(self):
         await self.client.wait_until_ready()
@@ -41,11 +31,17 @@ class StreamerFeeder:
         for streamer in streamers["twitch"]:
             name = streamer["name"]
             if streamer["id"] is None:
-                id = await get_channel_by_name(streamer["name"])
+                id = await TwitchUtills.get_channel_by_name(streamer["name"])
             else:
                 id = streamer["id"]
 
             self.streamers.append(StreamerInfoTwitch(name, id))
+
+        for streamer in streamers["wasd"]:
+            self.streamers.append(StreamerInfoWasd(streamer["name"], streamer["id"]))
+
+        for streamer in streamers["goodgame"]:
+            self.streamers.append(StreamerInfoGoodgame(streamer["name"], streamer["id"]))
 
         for streamer in self.streamers:
             log.info(streamer)
@@ -61,7 +57,7 @@ class StreamerFeeder:
 
         self.running = True
         self.client.loop.create_task(self.feed_loop())
-        self.client.loop.create_task(self.group_feed_loop())
+        # self.client.loop.create_task(self.group_feed_loop())
 
     async def group_feed_loop(self):
         while self.running:
@@ -116,23 +112,27 @@ class StreamerFeeder:
     async def feed_loop(self):
         while self.running:
             for streamer in self.streamers:
-                status = await streamer.get_status()
+                try:
+                    status = await streamer.get_status()
 
-                if status and not streamer.status:
-                    streamer.status = True
-                    data = await streamer.init_at_start()
-                    await self.channel.send(data)
-                elif not status and streamer.status:
-                    streamer.status = False
-                    await self.channel.send(f"{streamer.name} went offline")
+                    if status and not streamer.status:
+                        streamer.status = True
+                        data = await streamer.init_at_start()
+                        await self.channel.send(data)
+                    elif not status and streamer.status:
+                        streamer.status = False
+                        await self.channel.send(f"{streamer.name} went offline")
 
-                await asyncio.sleep(1)
+                    await asyncio.sleep(1)
 
-                if not status:
-                    continue
-                processData = await streamer.process_streamer()
-                if len(processData) > 1:
-                    await self.channel.send(processData)
+                    if not status:
+                        continue
+                    processData = await streamer.process_streamer()
+                    if len(processData) > 1:
+                        await self.channel.send(processData)
+                except Exception as e:
+                    log.info("Exception in streamer feeder, {}".format(e))
+                    print("Exception in streamer feeder, {}".format(e))         
 
             print("Twitch and goodgame have been read")
             log.info("Twitch and goodgame have been read")

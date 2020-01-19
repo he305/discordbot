@@ -23,16 +23,18 @@
     {
       "name": "karmikkoala",
       "id": "54742538"
-    },
-    {
-      "name": "c_a_k_e",
-      "id": "43899589"
     }
   ],
   "goodgame": [
     {
       "name": "gegeboyz",
       "id": "99600"
+    }
+  ],
+  "wasd": [
+    {
+      "name": "lasqa_wasd",
+      "id": "164328"
     }
   ]
 }
