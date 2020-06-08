@@ -1,5 +1,6 @@
 from anime_info import Info
 import aiohttp
+import json
 
 #02.11.2018 found out that requests.get to shikimori returns 403 forbidden without user-agent header
 headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'}
@@ -15,10 +16,12 @@ async def get_data(nickaname):
     async with aiohttp.ClientSession() as session:
         try:
             async with session.get("https://myanimelist.net/animelist/{}/load.json?offset=0".format(nickaname), timeout=10, headers=headers) as resp:
-                data = await resp.json(content_type='text/html')
-                for ur in data:
-                    anime_data.append(Info(ur))
-                return anime_data
+                raw_data = await resp.read()
+
+            data = json.loads(raw_data)
+            for ur in data:
+                anime_data.append(Info(ur))
+            return anime_data
         except Exception as e:
             print("Error while loading anime data: {}".format(repr(e)))
             log.warning("Error while loading anime data: {}".format(repr(e)))
