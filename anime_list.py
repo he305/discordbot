@@ -15,7 +15,7 @@ async def get_data(nickaname):
     async with aiohttp.ClientSession() as session:
         try:
             async with session.get("https://myanimelist.net/animelist/{}/load.json?offset=0".format(nickaname), timeout=10, headers=headers) as resp:
-                data = await resp.json()
+                data = await resp.json(content_type=None)
                 for ur in data:
                     anime_data.append(Info(ur))
                 return anime_data
