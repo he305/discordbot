@@ -18,7 +18,6 @@ async def get_data(nickaname):
         try:
             async with session.get("https://myanimelist.net/animelist/{}/load.json?offset=0".format(nickaname), timeout=10, headers=headers) as resp:
                 raw_data = await resp.read()
-                print(await resp.text())
 
             data = json.loads(raw_data)
             for ur in data:
