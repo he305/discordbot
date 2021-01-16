@@ -152,25 +152,29 @@ class Feeder:
                         await asyncio.sleep(5)
 
                 i = 0
-                pattern = '[HorribleSubs] '
-                headers = {'accept' : 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3'}
-                while i <= 5:
-                    try:
-                        async with session.get("https://horriblesubs.info", timeout=10, headers=headers) as resp:
-                            if resp.status == 502:
-                                pattern = '[Erai-raws] '  # if HorribleSubs is offline
-                            elif resp.status == 200:
-                                break
-                    except Exception as e:
-                        print("Error connecting to HorribleSubs: {}".format(repr(e)))
-                        log.warning("Error connecting to HorribleSubs: {}".format(repr(e)))
-                        i += 1
-                        if i > 5:
-                            print("Serious connection errors with HorribleSubs, changing pattern to Erai-raws")
-                            log.warning("Serious connection errors with HorribleSubs, changing pattern to Erai-raws")
-                            pattern = '[Erai-raws] '
-                        await asyncio.sleep(5)
 
+                ### RIP HorribleSubs
+                # pattern = '[HorribleSubs] '
+                # headers = {'accept' : 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3'}
+                # while i <= 5:
+                #     try:
+                #         async with session.get("https://horriblesubs.info", timeout=10, headers=headers) as resp:
+                #             if resp.status == 502:
+                #                 pattern = '[Erai-raws] '  # if HorribleSubs is offline
+                #             elif resp.status == 200:
+                #                 break
+                #     except Exception as e:
+                #         print("Error connecting to HorribleSubs: {}".format(repr(e)))
+                #         log.warning("Error connecting to HorribleSubs: {}".format(repr(e)))
+                #         i += 1
+                #         if i > 5:
+                #             print("Serious connection errors with HorribleSubs, changing pattern to Erai-raws")
+                #             log.warning("Serious connection errors with HorribleSubs, changing pattern to Erai-raws")
+                #             pattern = '[Erai-raws] '
+                #         await asyncio.sleep(5)
+
+                pattern = '[Erai-raws] '
+                
                 for entry in rss.entries:
                     if pattern not in entry.title or '1080p' not in entry.title:
                         continue
