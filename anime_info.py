@@ -2,6 +2,9 @@ from dateutil.parser import parse
 import aiohttp
 from bs4 import BeautifulSoup
 
+import logging
+log = logging.getLogger(__name__)
+
 headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'}
 
 days = [
@@ -14,8 +17,6 @@ days = [
     'воскресенье'
 ]
 
-import logging
-log = logging.getLogger(__name__)
 
 class Info:
     def __init__(self, anime):
@@ -26,8 +27,13 @@ class Info:
         self.watching_status = int(anime["status"])
         self.score = int(anime["score"])
 
-        self.start = parse(anime['anime_start_date_string']).date()
-        self.weekday = self.start.weekday()
+        # Used for cases when date is in broken format, e.g. 04-00-21. Can parse it, but if starting date is undefined it's not useful anyway.
+        try:
+            self.start = parse(anime['anime_start_date_string']).date()
+            self.weekday = self.start.weekday()
+        except ValueError:
+            self.start = parse("01-01-2021").date()
+            self.weekday = self.start.weekday()
 
         if 'series_synonyms' in anime:
             self.synonyms = [c.strip() for c in anime['series_synonyms'].split(';')]
@@ -39,7 +45,7 @@ class Info:
         else:
             self.image = ""
 
-        #Kept for better days
+        # Kept for better days
         if anime['anime_airing_status'] == '2':
             #all_eps = int(anime['total_episodes'])
             self.status = 'ended'
@@ -65,7 +71,7 @@ class Info:
 
     def __str__(self):
         return self.name
-    
+
     def __eq__(self, other):
         if isinstance(other, Info):
             return self.name == other.name and self.watching_status == other.watching_status
@@ -93,6 +99,7 @@ class Info:
                     if i > 5:
                         break
                     i += 1
+
 
 class InfoRaw:
     def __init__(self, anime):

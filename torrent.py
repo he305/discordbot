@@ -4,8 +4,6 @@ from urllib.parse import urlparse
 import shutil
 from hidden_data import USER_TORRENT, PASSWORD_TORRENT
 import transmissionrpc
-from tempfile import NamedTemporaryFile
-import os
 from proxy import Proxy
 
 import logging
@@ -50,7 +48,7 @@ class Torrent:
                             print("Nyaa.si is probably down, failed to load torrent")
                             log.warning("Nyaa.si is probably down, failed to load torrent")
                             return False
-                        else: 
+                        else:
                             url_name = parsed_url.path.split('/')[-1]
 
                             with open('tmp/' + url_name, 'wb') as temp_file:
@@ -65,7 +63,7 @@ class Torrent:
                     self.proxy.changeCurrent()
                     i += 1
                     await asyncio.sleep(5)
-                
+
             try:
                 self.tc.add_torrent('home/pi/git/discordbot/' + temp_file.name)
             except Exception as e:

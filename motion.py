@@ -22,7 +22,7 @@ class Motion:
                 if channel.name == "motion":
                     self.channel = channel
                     break
-        
+
         files = [f for f in glob.glob(self.motion_dir + "*.jpg")]
         files.sort()
 
@@ -31,7 +31,7 @@ class Motion:
             date = datetime.datetime.strptime(name, '%m:%d_%H:%M:%S').replace(year=datetime.datetime.today().year)
             if (datetime.datetime.today() - date).seconds > 120:
                 self.cached_images.append(f)
-            
+
         self.running = True
         print("Motion started to work")
         log.info("Motion started to work")

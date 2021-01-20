@@ -6,7 +6,7 @@ import aiohttp
 import re
 from proxy import Proxy
 from torrent import Torrent
-from hidden_data import  PROXY_REQUIRED
+from hidden_data import PROXY_REQUIRED
 
 import logging
 log = logging.getLogger(__name__)
@@ -49,7 +49,7 @@ class Feeder:
             await asyncio.sleep(30)
             await self.channel.send("Anime list is down, trying to reconnect...")
             self.anime_data_cached = await get_data(nickname)
-        
+
         for anime in self.anime_data_cached:
             if anime.watching_status == 1 or anime.watching_status == 6:
                 await anime.get_synonyms()
@@ -105,7 +105,6 @@ class Feeder:
                         new_data.append(item)
 
                 if new_data:
-                    
                     await self.channel.send("New animes are found:")
                     for item in new_data:
                         if item.watching_status == 1:
@@ -153,7 +152,7 @@ class Feeder:
 
                 i = 0
 
-                ### RIP HorribleSubs
+                # RIP HorribleSubs
                 # pattern = '[HorribleSubs] '
                 # headers = {'accept' : 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3'}
                 # while i <= 5:
@@ -174,7 +173,7 @@ class Feeder:
                 #         await asyncio.sleep(5)
 
                 pattern = '[Erai-raws] '
-                
+
                 for entry in rss.entries:
                     if pattern not in entry.title or '1080p' not in entry.title:
                         continue
@@ -186,7 +185,7 @@ class Feeder:
                         await self.channel.send(data)
                         if await self.torrent.add_torrent(entry.link):
                             await self.channel.send("Successfully added torrent: {}".format(entry.link))
-                        
+
                         self.rss_feed.append(entry.title)
                 log.info("Rss has been read")
                 print("Rss has been read")

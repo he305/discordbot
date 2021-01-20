@@ -6,9 +6,11 @@ from hidden_data import ACCESS_TOKEN
 import logging
 log = logging.getLogger(__name__)
 
+
 def send_message(message):
     r = requests.get("https://api.vk.com/method/messages.send?user_id=420339262&message={}&v=5.84&access_token={}".format(message, ACCESS_TOKEN)).json()
     print(r)
+
 
 async def get_new_posts(group):
     async with aiohttp.ClientSession() as session:
@@ -21,6 +23,7 @@ async def get_new_posts(group):
         except Exception as e:
             print("Error while getting new posts from vk group: {}".format(repr(e)))
             log.warning("Error while getting new posts from vk group: {}".format(repr(e)))
+
 
 async def get_post_comments(group, post_id):
     async with aiohttp.ClientSession() as session:

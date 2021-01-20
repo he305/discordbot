@@ -1,8 +1,4 @@
 from hidden_data import TOKEN
-
-import logging
-logging.basicConfig(filename='logging.log', level=logging.INFO, format='%(asctime)s:%(levelname)s:%(name)s: %(message)s', datefmt='%d/%m/%Y %H:%M:%S')
-
 import discord
 
 from discord.ext.commands import Bot
@@ -19,6 +15,9 @@ from streamer_feeder import StreamerFeeder
 from motion import Motion
 
 from search_image import SearchImage
+
+import logging
+logging.basicConfig(filename='logging.log', level=logging.INFO, format='%(asctime)s:%(levelname)s:%(name)s: %(message)s', datefmt='%d/%m/%Y %H:%M:%S')
 
 BOT_PREFIX = ('?', '!')
 
@@ -50,7 +49,7 @@ async def get_anime(ctx, nickname='he3050'):
     for anime in animes:
         if anime.watching_status == 1:
             await ctx.channel.send(anime.form_full_info() + '\n')
-    
+
     await ctx.channel.send("Complete {}".format(ctx.message.author.mention))
 
 

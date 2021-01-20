@@ -11,6 +11,7 @@ headers = {
         "Content-Type" : "text/plain;charset=UTF-8"
 }
 
+
 class SearchImage(commands.Cog):
     def __init__(self, client):
         self.client = client
@@ -20,7 +21,7 @@ class SearchImage(commands.Cog):
 
     @commands.command()
     async def s(self, ctx, url=None):
-        if url == None:
+        if url is None:
             await ctx.send("No url image provided")
             return
         async with aiohttp.ClientSession() as session:
@@ -79,7 +80,8 @@ class SearchImage(commands.Cog):
                             a = f.find("a")
                             if 'http:' not in a['href']:
                                 ur = 'http:' + a['href']
-                            else: ur = a['href']
+                            else:
+                                ur = a['href']
                             await ctx.send(ur + '\n' + a.find("img")['alt'])
                             await asyncio.sleep(1)
             except Exception as e:
