@@ -1,5 +1,5 @@
 from discord.ext import commands
-from anime_list import get_data
+from anime_list import AnimeListProvider
 import feedparser
 import asyncio
 import aiohttp
@@ -29,6 +29,8 @@ class Feeder:
         # Current regex algorithm cannot solve this problem
         self.special_cases = []
 
+        self.anime_provider = AnimeListProvider()
+
     async def feed(self, nickname):
         """
         Starting feeding horriblesubs rss for new anime for watching
@@ -44,11 +46,11 @@ class Feeder:
                     self.channel = channel
                     break
 
-        self.anime_data_cached = await get_data(nickname)
+        self.anime_data_cached = await self.anime_provider.get_anime_list(nickname)
         while not self.anime_data_cached:
             await asyncio.sleep(30)
             await self.channel.send("Anime list is down, trying to reconnect...")
-            self.anime_data_cached = await get_data(nickname)
+            self.anime_data_cached = await self.anime_provider.get_anime_list(nickname)
 
         for anime in self.anime_data_cached:
             if anime.watching_status == 1 or anime.watching_status == 6:
@@ -85,10 +87,10 @@ class Feeder:
         await self.client.wait_until_ready()
         async with aiohttp.ClientSession() as session:
             while self.running:
-                anime_data_full = await get_data(nickname)
+                anime_data_full = await self.anime_provider.get_anime_list(nickname)
                 while not anime_data_full:
                     await asyncio.sleep(30)
-                    anime_data_full = await get_data(nickname)
+                    anime_data_full = await self.anime_provider.get_anime_list(nickname)
 
                 new_data = []
                 for item in anime_data_full:

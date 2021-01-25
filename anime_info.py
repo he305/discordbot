@@ -1,4 +1,4 @@
-from dateutil.parser import parse
+from dateutil.parser import isoparse
 import aiohttp
 from bs4 import BeautifulSoup
 
@@ -6,6 +6,14 @@ import logging
 log = logging.getLogger(__name__)
 
 headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'}
+
+watching_status_enum = {
+    'watching' : 1,
+    'completed' : 2,
+    'on_hold' : 3,
+    'dropped' : 4,
+    'plan_to_watch' : 6
+}
 
 days = [
     'понедельник',
@@ -17,8 +25,20 @@ days = [
     'воскресенье'
 ]
 
+class InfoRaw:
+    def __init__(self, anime):
+        self.name = anime
 
-class Info:
+    def get_all_names(self):
+        return self.name
+
+    def __str__(self):
+        return self.name
+
+    def form_full_info(self):
+        return self.name + '\n'
+
+class InfoMALv1(InfoRaw):
     def __init__(self, anime):
         # Collecting info
         self.id = int(anime["anime_id"])
@@ -28,11 +48,12 @@ class Info:
         self.score = int(anime["score"])
 
         # Used for cases when date is in broken format, e.g. 04-00-21. Can parse it, but if starting date is undefined it's not useful anyway.
+        # 25.01.2021 - probably fixed with isoparse
         try:
-            self.start = parse(anime['anime_start_date_string']).date()
+            self.start = isoparse(anime['anime_start_date_string']).date()
             self.weekday = self.start.weekday()
         except ValueError:
-            self.start = parse("01-01-2021").date()
+            self.start = isoparse("01-01-2021").date()
             self.weekday = self.start.weekday()
 
         if 'series_synonyms' in anime:
@@ -73,7 +94,7 @@ class Info:
         return self.name
 
     def __eq__(self, other):
-        if isinstance(other, Info):
+        if isinstance(other, InfoMALv1):
             return self.name == other.name and self.watching_status == other.watching_status
         return False
 
@@ -100,16 +121,60 @@ class Info:
                         break
                     i += 1
 
-
-class InfoRaw:
+class InfoMALv2b(InfoRaw):
     def __init__(self, anime):
-        self.name = anime
+        # Collecting info
+        self.id = int(anime['id'])
+        self.name = anime['title']
+        self.watched = int(anime['my_list_status']['num_episodes_watched'])
+        watching_status_str = anime['my_list_status']['status']
+        self.watching_status = watching_status_enum[watching_status_str]
+        self.score = int(anime['my_list_status']['score'])
+        
+        if 'start_date' in anime:
+            self.start = isoparse(anime['start_date']).date()
+            self.weekday = self.start.weekday()
+        
+        if 'alternative_titles' in anime:
+            alt_titles = anime['alternative_titles']
+            self.synonyms = []
+            if 'en' in alt_titles:
+                self.synonyms.append(alt_titles['en'])
+            if 'ja' in alt_titles:
+                self.synonyms.append(alt_titles['ja'])
+            if 'synonyms' in alt_titles:
+                for c in alt_titles['synonyms']:
+                    self.synonyms.append(c.strip())
+        
+        if 'main_picture' in anime:
+            self.image = anime['main_picture']['large']
+        else:
+            self.image = ""
+
+        self.num_episodes = anime['num_episodes']
+
+        self.status = anime['status']
+
+    def form_full_info(self):
+        info = ''
+        info += '{0} - {1} серий\n'.format(self.name, str(self.watched))
+        if self.num_episodes - self.watched != 0:
+            info += '{0} пропущено\n'.format(str(self.num_episodes - self.watched))
+        if self.status == 'airing':
+            info += 'Новая серия в {0}.\n'.format(days[self.weekday])
+        info += self.image
+        return info
 
     def get_all_names(self):
-        return self.name
+        return self.name + ' ' + " ".join(self.synonyms)
 
     def __str__(self):
         return self.name
 
-    def form_full_info(self):
-        return self.name + '\n'
+    def __eq__(self, other):
+        if isinstance(other, InfoMALv1):
+            return self.name == other.name and self.watching_status == other.watching_status
+        return False
+
+    async def get_synonyms(self):
+        pass
