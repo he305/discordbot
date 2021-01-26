@@ -49,13 +49,12 @@ class Feeder:
         self.anime_data_cached = await self.anime_provider.get_anime_list(nickname)
         while not self.anime_data_cached:
             await asyncio.sleep(30)
-            await self.channel.send("Anime list is down, trying to reconnect...")
+            # await self.channel.send("Anime list is down, trying to reconnect...")
             self.anime_data_cached = await self.anime_provider.get_anime_list(nickname)
 
         for anime in self.anime_data_cached:
             if anime.watching_status == 1 or anime.watching_status == 6:
                 await anime.get_synonyms()
-                await asyncio.sleep(3)
 
         await self.proxy.get_new()
         self.running = True
@@ -124,7 +123,6 @@ class Feeder:
                     for anime in self.anime_data_cached:
                         if anime.watching_status == 1 or anime.watching_status == 6:
                             await anime.get_synonyms()
-                            await asyncio.sleep(3)
 
                 anime_data = [self.remove_characters(c.get_all_names())
                             for c in self.anime_data_cached if c.watching_status == 1 or c.watching_status == 6]
@@ -141,7 +139,7 @@ class Feeder:
                         async with session.get('https://nyaa.si/?page=rss', timeout=5, proxy=proxy) as resp:
                             rss = feedparser.parse(await resp.text())
                     except IndexError:
-                            rss = []
+                        rss = []
                     except Exception as e:
                         if i > 5:
                             await self.proxy.get_new()
