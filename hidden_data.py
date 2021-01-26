@@ -9,8 +9,8 @@ PROXY_REQUIRED = False
 USER_TORRENT = None
 PASSWORD_TORRENT = None
 
-LOGIN_MAL = os.environ.get('') or None
-PASS_MAL = os.environ.get('') or None
+LOGIN_MAL = os.environ.get('LOGIN_MAL') or None
+PASS_MAL = os.environ.get('PASS_MAL') or None
 
-ANIME_API = os.environ.get('') or "MAL"
-API_VERSION = os.environ.get('') or "V2b"
+ANIME_API = os.environ.get('ANIME_API') or "MAL"
+API_VERSION = os.environ.get('API_VERSION') or "V2b"
