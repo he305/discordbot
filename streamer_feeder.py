@@ -84,9 +84,9 @@ class StreamerFeeder:
                 if data not in self.group_posts and offset < 600 * len(self.groups):
                     self.group_posts.append(data)
                     await self.channel.send(data)
-    
+
                 # comments = get_post_comments(group, res['id'])
-    
+
                 # for comment in comments:
                 #     if int(comment['likes']['count']) > MIN_LIKES:
                 #         url = ""
@@ -100,13 +100,13 @@ class StreamerFeeder:
                 #         text = ""
                 #         if 'text' in comment:
                 #             text = comment['text']
-    
+
                 #         data = "\n{}{}\nURL: {}".format(text, '\n' + url, "https://vk.com/{}?w=wall-{}_{}_r{}".format(self.groups[group], group, res['id'], comment['id']))
-    
+
                 #         if data not in self.comments:
                 #             self.comments.append(data)
                 #             await self.channel.send(data)
-    
+
                 await asyncio.sleep(300)
 
     async def feed_loop(self):

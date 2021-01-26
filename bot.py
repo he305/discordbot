@@ -2,17 +2,13 @@ from hidden_data import TOKEN
 import discord
 
 from discord.ext.commands import Bot
-from anime_list import get_data
+from anime_list import AnimeListProvider
 from forecast import weather
 from anime_feeder import Feeder
-from rkn import BlockInfo
-import asyncio
-from datetime import datetime
-import pytz
-from vk_api import send_message
+# from rkn import BlockInfo
 
 from streamer_feeder import StreamerFeeder
-from motion import Motion
+# from motion import Motion
 
 from search_image import SearchImage
 
@@ -45,7 +41,8 @@ async def get_anime(ctx, nickname='he3050'):
     :return:
     """
     await ctx.channel.send("Starting collecting data for {}".format(ctx.message.author.mention))
-    animes = await get_data(nickname)
+    provider = AnimeListProvider()
+    animes = await provider.get_anime_list(nickname)
     for anime in animes:
         if anime.watching_status == 1:
             await ctx.channel.send(anime.form_full_info() + '\n')
