@@ -3,7 +3,7 @@ import aiohttp
 import json
 import asyncio
 from discordbot.utils.malapi import MALAPIV1, MALAPIV2b, SHIKIAPIV1
-from discordbot.hidden_data import ANIME_API, API_VERSION
+import discordbot.hidden_data as api_info
 import logging
 log = logging.getLogger(__name__)
 
@@ -24,7 +24,7 @@ class AnimeListProvider:
             }
         }
 
-    async def get_anime_list(self, nickname='he3050'):
+    async def get_anime_list(self, nickname='he3050', ANIME_API=api_info.ANIME_API, API_VERSION=api_info.API_VERSION):
         try:
             return await self.api_list[ANIME_API][API_VERSION]()
         except Exception as e:
