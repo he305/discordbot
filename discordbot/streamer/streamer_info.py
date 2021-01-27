@@ -1,4 +1,4 @@
-from streamer_utills import TwitchUtills, WasdUtills, GoodgameUtills
+from discordbot.utils.streamer_utills import TwitchUtills, WasdUtills, GoodgameUtills
 import asyncio
 
 

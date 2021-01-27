@@ -1,7 +1,7 @@
 import aiohttp
 import asyncio
 import requests
-from hidden_data import LOGIN_MAL, PASS_MAL
+from discordbot.hidden_data import LOGIN_MAL, PASS_MAL
 
 import logging
 log = logging.getLogger(__name__)
@@ -143,21 +143,3 @@ class SHIKIAPIV1:
                 print("Error while loading anime data: {}".format(repr(e)))
                 log.warning("Error while loading anime data: {}".format(repr(e)))
                 return []
-
-
-import json
-
-async def main():
-    full_list = await MALAPIV2b.get_anime_list(limit=100)
-    # with open("test.json", 'w') as file_data:
-    #     json.dump(full_list, file_data)
-
-    for node in full_list:
-        if (node["node"]['status'] == 'not_yet_aired'): #finished_airing
-            print(json.dumps(node["node"], sort_keys=True, indent=4))
-            return
-
-
-if __name__ == "__main__":
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())

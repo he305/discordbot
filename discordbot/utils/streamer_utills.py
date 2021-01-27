@@ -1,7 +1,7 @@
 import aiohttp
 import asyncio
 
-from hidden_data import CLIENT_ID
+from discordbot.hidden_data import CLIENT_ID
 
 headers = {
     'Client-ID': CLIENT_ID,
@@ -132,11 +132,3 @@ class GoodgameUtills:
         if stream is None:
             return ""
         return stream["title"]
-
-
-if __name__ == "__main__":
-    # print(get_title(22484632))
-    loop = asyncio.get_event_loop()
-    # loop.run_until_complete(get_channel_by_name("forsen"))
-    loop.run_until_complete(TwitchUtills.get_channel_by_name("honeymad"))
-    #loop.run_until_complete(GoodgameUtills.get_title('99600'))

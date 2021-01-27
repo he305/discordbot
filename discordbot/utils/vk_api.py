@@ -1,7 +1,7 @@
 import requests
 import aiohttp
 
-from hidden_data import ACCESS_TOKEN
+from discordbot.hidden_data import ACCESS_TOKEN
 
 import logging
 log = logging.getLogger(__name__)

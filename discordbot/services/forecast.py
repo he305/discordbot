@@ -42,11 +42,3 @@ def forecast():
     print("Forecast for {0}/{1}".format(location_data['country_name'], location_data['city']))
     for i in data['list']:
         print(i['dt_txt'], '{0:3.0f}'.format(i['main']['temp']), i['weather'][0]['description'])
-
-
-def main():
-    weather()
-
-
-if __name__ == "__main__":
-    main()

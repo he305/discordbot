@@ -1,12 +1,12 @@
 from discord.ext import commands
-from anime_list import AnimeListProvider
+from discordbot.anime.anime_list import AnimeListProvider
 import feedparser
 import asyncio
 import aiohttp
 import re
-from proxy import Proxy
-from torrent import Torrent
-from hidden_data import PROXY_REQUIRED
+from discordbot.utils.proxy import Proxy
+from discordbot.utils.torrent import Torrent
+from discordbot.hidden_data import PROXY_REQUIRED
 
 import logging
 log = logging.getLogger(__name__)

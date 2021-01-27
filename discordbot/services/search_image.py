@@ -54,7 +54,7 @@ class SearchImage(commands.Cog):
             except Exception as e:
                 print("Exception while loading from {}: {}".format(site, repr(e)))
                 log.warning("Exception while loading from {}: {}".format(site, repr(e)))
-            
+
             site = "Saucenao"
             try:
                 async with session.get("https://saucenao.com/search.php?url={}".format(url), timeout=10, headers=headers) as resp:
@@ -91,4 +91,3 @@ class SearchImage(commands.Cog):
             await ctx.send("Search done")
             print("Search for {} done".format(url))
             log.info("Search for {} done".format(url))
-            

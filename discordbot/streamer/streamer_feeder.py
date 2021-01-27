@@ -2,9 +2,9 @@ import asyncio
 import json
 import logging
 
-from vk_api import get_new_posts
-from streamer_utills import TwitchUtills
-from streamer_info import StreamerInfoTwitch, StreamerInfoWasd, StreamerInfoGoodgame
+from discordbot.utils.vk_api import get_new_posts
+from discordbot.utils.streamer_utills import TwitchUtills
+from discordbot.streamer.streamer_info import StreamerInfoTwitch, StreamerInfoWasd, StreamerInfoGoodgame
 
 MIN_LIKES = 10
 
@@ -25,7 +25,7 @@ class StreamerFeeder:
     async def feed(self):
         await self.client.wait_until_ready()
 
-        with open("streamers.json", 'r', encoding='utf8') as f:
+        with open("configs/streamers.json", 'r', encoding='utf8') as f:
             streamers = json.load(f)
 
         for streamer in streamers["twitch"]:
@@ -46,7 +46,7 @@ class StreamerFeeder:
         for streamer in self.streamers:
             log.info(streamer)
 
-        with open('groups.json', 'r', encoding="utf8") as f:
+        with open('configs/groups.json', 'r', encoding="utf8") as f:
             self.groups = json.load(f)
 
         for server in self.client.guilds:
@@ -137,60 +137,3 @@ class StreamerFeeder:
             print("Twitch and goodgame have been read")
             log.info("Twitch and goodgame have been read")
             await asyncio.sleep(60)
-
-        # async with aiohttp.ClientSession() as session:
-        #     while self.running:
-        #         for streamer in self.streamers:
-        #             try:
-        #                 async with session.get(
-        #                     "https://api.twitch.tv/helix/streams?user_login=" + streamer,
-        #                     timeout=10,
-        #                     headers=self.headers) as resp:
-
-        #                     stream_data = await resp.json()
-
-        #                     if not stream_data['data'] and streamer in self.streamer_live:
-        #                         self.streamer_live.remove(streamer)
-
-        #                     if stream_data['data'] and streamer not in self.streamer_live:
-        #                         await self.channel.send("@everyone\n{0} is online".format(streamer))
-        #                         self.streamer_live.append(streamer)
-
-        #             except Exception as e:
-        #                 print("Failed to load twitch: {}".format(repr(e)))
-        #                 log.warning("Failed to load twitch: {}".format(repr(e)))
-
-        #             await asyncio.sleep(5)
-
-        #         for goodgame_stream in self.goodgame:
-        #             try:
-        #                 async with session.get(
-        #                     "http://goodgame.ru/api/getggchannelstatus?id=" + goodgame_stream + "&fmt=json", 
-        #                     timeout=10) as resp:
-
-        #                     data = await resp.json()
-
-        #                     if data[goodgame_stream]["status"] == "Live" and goodgame_stream not in self.goodgames_live:
-        #                         self.goodgames_live.append(goodgame_stream)
-        #                         await self.channel.send("@everyone\n{0} is online".format(self.goodgame[goodgame_stream]))
-
-        #                     if data[goodgame_stream]["status"] == "Dead" and goodgame_stream in self.goodgames_live:
-        #                         self.goodgames_live.remove(goodgame_stream)
-
-        #             except Exception as e:
-        #                 log.warning("Goodgame timed out: {}".format(repr(e)))
-        #                 print("Goodgame timed out: {}".format(repr(e)))
-
-        #             await asyncio.sleep(5)
-
-        #         print("Twitch and goodgame have been read")
-        #         log.info("Twitch and goodgame have been read")
-        #         await asyncio.sleep(60)
-
-
-if __name__ == "__main__":
-    s = StreamerFeeder(None)
-    loop = asyncio.get_event_loop()
-    # loop.run_until_complete(get_channel_by_name("forsen"))
-    # loop.run_until_complete(get_channel_by_name("lasqa"))
-    loop.run_until_complete(s.feed())
