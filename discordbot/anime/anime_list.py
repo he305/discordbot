@@ -1,9 +1,9 @@
-from anime_info import InfoMALv1, InfoMALv2b, InfoRaw
+from discordbot.anime.anime_info import InfoMALv1, InfoMALv2b, InfoRaw
 import aiohttp
 import json
 import asyncio
-from malapi import MALAPIV1, MALAPIV2b, SHIKIAPIV1
-from hidden_data import ANIME_API, API_VERSION
+from discordbot.utils.malapi import MALAPIV1, MALAPIV2b, SHIKIAPIV1
+from discordbot.hidden_data import ANIME_API, API_VERSION
 import logging
 log = logging.getLogger(__name__)
 
@@ -51,18 +51,3 @@ class AnimeListProvider:
         for ur in anime_list:
             data.append(InfoRaw(ur['target_title']))
         return data
-
-
-async def main():
-
-    provider = AnimeListProvider()
-    data = await provider.get_anime_list()
-
-    for d in data:
-        if d.watching_status != 'completed':
-            print(d.form_full_info())
-
-
-if __name__ == "__main__":
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())

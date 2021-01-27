@@ -1,16 +1,12 @@
-from hidden_data import TOKEN
+from discordbot.hidden_data import TOKEN
 import discord
 
 from discord.ext.commands import Bot
-from anime_list import AnimeListProvider
-from forecast import weather
-from anime_feeder import Feeder
-# from rkn import BlockInfo
-
-from streamer_feeder import StreamerFeeder
-# from motion import Motion
-
-from search_image import SearchImage
+from discordbot.anime.anime_list import AnimeListProvider
+from discordbot.services.forecast import weather
+from discordbot.anime.anime_feeder import Feeder
+from discordbot.streamer.streamer_feeder import StreamerFeeder
+from discordbot.services.search_image import SearchImage
 
 import logging
 logging.basicConfig(filename='logging.log', level=logging.INFO, format='%(asctime)s:%(levelname)s:%(name)s: %(message)s', datefmt='%d/%m/%Y %H:%M:%S')
@@ -22,12 +18,8 @@ client = Bot(command_prefix=BOT_PREFIX)
 streamer_feeder = StreamerFeeder(client)
 client.loop.create_task(streamer_feeder.feed())
 
-# client.add_cog(BlockInfo(client))
 anime_feeder = Feeder(client)
 client.loop.create_task(anime_feeder.feed('he3050'))
-
-# motion_feeder = Motion(client)
-# client.loop.create_task(motion_feeder.feed())
 
 client.add_cog(SearchImage(client))
 

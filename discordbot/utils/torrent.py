@@ -2,9 +2,9 @@ import asyncio
 import aiohttp
 from urllib.parse import urlparse
 import shutil
-from hidden_data import USER_TORRENT, PASSWORD_TORRENT
+from discordbot.hidden_data import USER_TORRENT, PASSWORD_TORRENT
 import transmissionrpc
-from proxy import Proxy
+from discordbot.utils.proxy import Proxy
 
 import logging
 log = logging.getLogger(__name__)
@@ -34,7 +34,7 @@ class Torrent:
             log.warning("No free space left, can't add torrent")
             return False
 
-        await self.proxy.get_new()   
+        await self.proxy.get_new()
         parsed_url = urlparse(url)
 
         i = 0
@@ -73,5 +73,5 @@ class Torrent:
 
             print("Successfully added torrent: {}".format(url))
             log.info("Successfully added torrent: {}".format(url))
-            #os.remove('home/pi/git/discordbot/' + temp_file.name)
+            # os.remove('home/pi/git/discordbot/' + temp_file.name)
             return True
