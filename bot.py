@@ -3,7 +3,6 @@ import discord
 
 from discord.ext.commands import Bot
 from discordbot.anime.anime_list import AnimeListProvider
-from discordbot.services.forecast import weather
 from discordbot.anime.anime_feeder import Feeder
 from discordbot.streamer.streamer_feeder import StreamerFeeder
 from discordbot.services.search_image import SearchImage
@@ -40,16 +39,6 @@ async def get_anime(ctx, nickname='he3050'):
             await ctx.channel.send(anime.form_full_info() + '\n')
 
     await ctx.channel.send("Complete {}".format(ctx.message.author.mention))
-
-
-@client.command(name="weather")
-async def get_weather(ctx):
-    """
-    Get current weather in Elektrostal, RU
-    :return:
-    """
-    data = weather()
-    await ctx.channel.send(data)
 
 
 @client.event

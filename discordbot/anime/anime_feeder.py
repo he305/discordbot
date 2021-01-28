@@ -3,10 +3,10 @@ from discordbot.anime.anime_list import AnimeListProvider
 import feedparser
 import asyncio
 import aiohttp
-import re
 from discordbot.utils.proxy import Proxy
 from discordbot.utils.torrent import Torrent
 from discordbot.hidden_data import PROXY_REQUIRED
+from discordbot.utils.string_utils import StringUtills
 
 import logging
 log = logging.getLogger(__name__)
@@ -124,9 +124,9 @@ class Feeder:
                         if anime.watching_status == 1 or anime.watching_status == 6:
                             await anime.get_synonyms()
 
-                anime_data = [self.remove_characters(c.get_all_names())
+                anime_data = [StringUtills.remove_characters(c.get_all_names())
                             for c in self.anime_data_cached if c.watching_status == 1 or c.watching_status == 6]
-                    
+
                 anime_data += self.special_cases  # See init
                 # log.info("Anime data: {}".format(anime_data))
                 print(anime_data)
@@ -179,7 +179,7 @@ class Feeder:
                         continue
 
                     title = entry.title.replace(pattern, '')
-                    title = self.fix_rss_title(title)
+                    title = StringUtills.fix_rss_title(title)
                     if [s for s in anime_data if title in s] and entry.title not in self.rss_feed:
                         data = "{}\nNew series: {}\n[Link]({})".format('@everyone', entry.title, entry.link)
                         await self.channel.send(data)
@@ -190,30 +190,3 @@ class Feeder:
                 log.info("Rss has been read")
                 print("Rss has been read")
                 await asyncio.sleep(300)
-
-    def remove_characters(self, st):
-        """
-        Replace all special characters for spaces
-        :param st: string to be replaced
-        :return:
-        """
-        st = st.translate({ord(c): " " for c in "'!@#$%^&*()[]{};:,./<>?\|`~-=_+"}).lower()
-
-        # delete_season_pattern
-        st = re.sub('s\d+', '', st)
-        return " ".join(st.split())
-
-    def fix_rss_title(self, st):
-        """
-        Fix horriblesubs title for comprasion with mal titles
-        Example: Steins;Gate 0 - 01 [1080p].mkv -> steins gate 0
-        :param st: string to be fixed
-        :return:
-        """
-        pattern = r'(^[a-zA-Z0-9\s!\'@#$%^&*()\[\]\{\}\;\:\,\.\/\<\>\?\|\`\~\-\–\=\_\+]*) [-–] \d+'
-        try:
-            title = self.remove_characters(re.match(pattern, st).group(1))
-            return title
-        except AttributeError:
-            print("Attribute error: " + st)
-            return st

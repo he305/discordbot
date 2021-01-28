@@ -2,13 +2,13 @@ import pytest
 from discordbot.utils.malapi import MALAPIV2b, MALAPIV1
 
 
-@pytest.fixture
+@pytest.fixture(autouse=True)
 async def anime_list_v2b():
     anime_list = await MALAPIV2b.get_anime_list()
     return anime_list
 
 
-@pytest.fixture
+@pytest.fixture(autouse=True)
 async def anime_list_v1():
     anime_list = await MALAPIV1.get_anime_list()
     return anime_list
@@ -31,3 +31,10 @@ class TestMalApiv2b:
     async def test_malv2b_search_anime(self):
         data = await MALAPIV2b.search_anime("yosuga no sora")
         assert(data[0]['node']['title'] == 'Yosuga no Sora: In Solitude, Where We Are Least Alone.')
+
+
+class TestMalApiv1:
+    @pytest.mark.asyncio
+    async def test_anime_list_len(self, anime_list_v1):
+        v1 = anime_list_v1
+        assert(len(v1) > 200)

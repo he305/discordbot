@@ -74,7 +74,7 @@ class MALAPIV2b:
             token = await MALAPIV2b.__get_access_token()
             if token is None:
                 log.warning("Couldn't get anime list, returning None")
-                return None
+                return []
             MALAPIV2b.ACCESS_TOKEN = token
 
         query = "&fields="
