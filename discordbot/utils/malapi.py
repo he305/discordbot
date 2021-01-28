@@ -69,21 +69,18 @@ class MALAPIV2b:
         return loginData["access_token"]
 
     @staticmethod
-    async def get_anime_list(fields=["alternative_titles", "broadcast", "status", "start_date", "my_list_status", "num_episodes"], sort="", limit=100, offset=0):
+    async def get_anime_list(fields=["alternative_titles", "broadcast", "status", "start_date", "my_list_status", "num_episodes"], sort="anime_title", limit=500, offset=0):
         if MALAPIV2b.ACCESS_TOKEN is None:
             token = await MALAPIV2b.__get_access_token()
             if token is None:
                 log.warning("Couldn't get anime list, returning None")
-                return None
+                return []
             MALAPIV2b.ACCESS_TOKEN = token
 
-        if not fields:
-            URL = "https://api.myanimelist.net/v2/users/@me/animelist?limit={}&offset={}&sort={}".format(limit, offset, sort)
-        else:
-            query = "&fields="
-            for field in fields:
-                query += (field + ",")
-            URL = "https://api.myanimelist.net/v2/users/@me/animelist?limit={}&offset={}&sort={}".format(limit, offset, sort) + query[:-1]
+        query = "&fields="
+        for field in fields:
+            query += (field + ",")
+        URL = "https://api.myanimelist.net/v2/users/@me/animelist?limit={}&offset={}&sort={}".format(limit, offset, sort) + query[:-1]
 
         headers = MALAPIV2b.headers
         headers["Authorization"] = "Bearer {}".format(MALAPIV2b.ACCESS_TOKEN)
@@ -123,6 +120,37 @@ class MALAPIV2b:
 
             nextPage = nextResponse['paging']
         return animeList
+
+    @staticmethod
+    async def search_anime(anime_name, nsfw=True):
+        if MALAPIV2b.ACCESS_TOKEN is None:
+            token = await MALAPIV2b.__get_access_token()
+            if token is None:
+                log.warning("Couldn't get anime list, returning None")
+                return None
+            MALAPIV2b.ACCESS_TOKEN = token
+
+        anime_name = anime_name.replace(' ', '+')
+        headers = MALAPIV2b.headers
+        headers["Authorization"] = "Bearer {}".format(MALAPIV2b.ACCESS_TOKEN)
+
+        URL = "https://api.myanimelist.net/v2/anime?q={}&nsfw={}".format(anime_name, nsfw)
+
+        try:
+            async with aiohttp.ClientSession() as session:
+                async with session.get(
+                        URL,
+                        timeout=3,
+                        headers=headers) as resp:
+
+                    response = await resp.json()
+
+                    return response['data']
+        except Exception as ex:
+            print("Can't search anime, exception: {}".format(repr(ex)))
+            log.error("Can't search anime, exception: {}".format(repr(ex)))
+            return []
+
 
 
 class SHIKIAPIV1:

@@ -101,6 +101,20 @@ class WasdUtills:
 
 class GoodgameUtills:
     @staticmethod
+    async def get_channel_by_name(streamer_name):
+        async with aiohttp.ClientSession() as session:
+            async with session.get(
+                'http://goodgame.ru/api/getchannelstatus?id={}&fmt=json'.format(streamer_name),
+                    timeout=10,
+                    headers=headers) as resp:
+
+                stream_data = await resp.json()
+                if not stream_data:
+                    return None
+                user_id = next(iter(stream_data))
+                return user_id
+
+    @staticmethod
     async def __get_stream(streamer_id):
         async with aiohttp.ClientSession() as session:
             async with session.get(

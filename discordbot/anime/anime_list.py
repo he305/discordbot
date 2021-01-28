@@ -3,7 +3,7 @@ import aiohttp
 import json
 import asyncio
 from discordbot.utils.malapi import MALAPIV1, MALAPIV2b, SHIKIAPIV1
-from discordbot.hidden_data import ANIME_API, API_VERSION
+import discordbot.hidden_data as api_info
 import logging
 log = logging.getLogger(__name__)
 
@@ -14,7 +14,12 @@ headers = {'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/
 
 class AnimeListProvider:
     def __init__(self):
-        self.api_list = {
+        self.available_api = {
+            "MAL": ["V1", "V2b"],
+            "SHIKI": ["V1"]
+        }
+
+        self.api_list_func = {
             "MAL": {
                 "V1": self.__get_anime_list_mal_v1,
                 "V2b": self.__get_anime_list_mal_v2b
@@ -23,10 +28,19 @@ class AnimeListProvider:
                 "V1": self.__get_anime_list_shiki_v1
             }
         }
+        self.info_list_func = {
+            "MAL": {
+                "V1": self.__parse_anime_list_mal_v1,
+                "V2b": self.__parse_anime_list_mal_v2b
+            },
+            "SHIKI": {
+                "V1": self.__parse_anime_list_shiki_v1
+            }
+        }
 
-    async def get_anime_list(self, nickname='he3050'):
+    async def get_anime_list(self, nickname='he3050', ANIME_API=api_info.ANIME_API, API_VERSION=api_info.API_VERSION):
         try:
-            return await self.api_list[ANIME_API][API_VERSION]()
+            return await self.api_list_func[ANIME_API][API_VERSION]()
         except Exception as e:
             log.warning("Error while loading anime data from {}, version {}: {}".format(ANIME_API, API_VERSION, repr(e)))
             return []
@@ -51,3 +65,28 @@ class AnimeListProvider:
         for ur in anime_list:
             data.append(InfoRaw(ur['target_title']))
         return data
+
+    def parse_anime_list(self, data, ANIME_API=api_info.ANIME_API, API_VERSION=api_info.ANIME_API):
+        try:
+            return self.info_list_func[ANIME_API][API_VERSION](data)
+        except Exception as e:
+            log.warning("Error while parsing anime data from {}, version {}: {}".format(ANIME_API, API_VERSION, repr(e)))
+            return []
+
+    def __parse_anime_list_mal_v2b(self, data):
+        anime_list = []
+        for ur in data:
+            anime_list.append(InfoMALv2b(ur['node']))
+        return anime_list
+
+    def __parse_anime_list_mal_v1(self, data):
+        anime_list = []
+        for ur in data:
+            anime_list.append(InfoMALv1(ur))
+        return anime_list
+
+    def __parse_anime_list_shiki_v1(self, data):
+        anime_list = []
+        for ur in data:
+            anime_list.append(InfoRaw(ur['target_title']))
+        return anime_list
